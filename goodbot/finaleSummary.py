@@ -1,6 +1,7 @@
 import os
 import operator
 
+
 def main():
     number_of_posts = 0
     number_of_comments = 0
@@ -25,14 +26,13 @@ def main():
             number_of_comments += int(lines[1].split(":")[1].strip())
             number_of_good_comments += int(lines[2].split(":")[1].strip())
             for i in range(4, len(lines)):
-                comments = int(lines[i].split(":")[1].strip()) 
+                comments = int(lines[i].split(":")[1].strip())
                 user = lines[i].split(":")[0].strip()
                 if user in users.keys():
                     users[user] += comments
                 else:
                     users[user] = comments
     sorted_dict = dict(sorted(users.items(), key=operator.itemgetter(1), reverse=True))
-
 
     f = open(str(from_date_finale) + "to" + str(to_date_finale) + ".txt", "w")
     f.write("Number of created posts: " + str(number_of_posts) + "\n")
@@ -42,6 +42,7 @@ def main():
     for key, value in sorted_dict.items():
         f.write(key + ": " + str(value) + "\n")
     f.close()
+
 
 if __name__ == "__main__":
     main()

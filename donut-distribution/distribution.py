@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 def plot(send, received, all_send, all_receive, all_user, file_name):
     sender = []
     interval = []
@@ -9,18 +10,18 @@ def plot(send, received, all_send, all_receive, all_user, file_name):
     for _, value in received.items():
         receiver.append(len(value))
 
-
     combined = sender + list(reversed(receiver))[1:]
-    combined[len(sender) - 1] +=  receiver.pop()
+    combined[len(sender) - 1] += receiver.pop()
     interval = list(range(-95, 100, 5))
 
-    plt.bar(interval, combined, color="black", width = 5)
+    plt.bar(interval, combined, color="black", width=5)
 
     plt.xlabel("Distribution")
     plt.ylabel("Users")
     plt.title("Counted " + str(all_user) + " user with more than 10 tips, " + str(all_send) + " send more, " + str(all_receive) + " received more!")
-    #plt.show()
-    plt.savefig(file_name.split(".")[0] + '.pdf')
+    # plt.show()
+    plt.savefig(file_name.split(".")[0] + '.png')
+
 
 def create_user(file_name):
     user = {}
@@ -37,18 +38,23 @@ def create_user(file_name):
                 user[receiver] = [set(), set()]
             user[sender][0].add(number)
             user[receiver][1].add(number)
+    # remove bots
+    bots = ["AutoModerator", "donut-bot"]
+    for bot in bots:
+        user.pop(bot)
     return user
+
 
 if __name__ == "__main__":
     file_name = 'distribution_138.txt'
     user = create_user(file_name)
 
     send_distribution = {5: [],  10: [], 15: [], 20: [], 25: [], 30: [], 35: [],
-                    40: [], 45: [], 50: [], 55: [], 60: [], 65: [], 70: [], 75: [],
-                    80: [], 85: [], 90: [], 95: [], 100: []}
+                        40: [], 45: [], 50: [], 55: [], 60: [], 65: [], 70: [], 75: [],
+                        80: [], 85: [], 90: [], 95: [], 100: []}
     receive_distribution = {5: [],  10: [], 15: [], 20: [], 25: [], 30: [], 35: [],
-                    40: [], 45: [], 50: [], 55: [], 60: [], 65: [], 70: [], 75: [],
-                    80: [], 85: [], 90: [], 95: [], 100: []}
+                            40: [], 45: [], 50: [], 55: [], 60: [], 65: [], 70: [], 75: [],
+                            80: [], 85: [], 90: [], 95: [], 100: []}
 
     all_user = 0
     user_str_list = []
@@ -72,7 +78,7 @@ if __name__ == "__main__":
                 max_recieved[0] = user
             if max_send[1] < len_stats0:
                 max_send[1] = len_stats0
-                max_send[0] = user   
+                max_send[0] = user
         if send_uservalue > -1:
             for precentage, _ in send_distribution.items():
                 if precentage >= send_uservalue:
@@ -100,7 +106,7 @@ if __name__ == "__main__":
             current_file.write("Users with less than " + str(precentage) + "% send:\n")
             for line in value:
                 current_file.write("\t" + line + "\n")
-        for precentage, value in receive_distribution.items():
+        for precentage, value in sorted(list(receive_distribution.items()), reverse=True):
             current_file.write("Users with less than " + str(precentage) + "% receive\n")
             for line in value:
                 current_file.write("\t" + line + "\n")

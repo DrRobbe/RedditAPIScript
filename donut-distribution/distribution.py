@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from typing import Dict, List, Set, Any
 
 
 def plot(send, received, all_send, all_receive, all_user, file_name):
@@ -23,8 +24,8 @@ def plot(send, received, all_send, all_receive, all_user, file_name):
     plt.savefig(file_name.split(".")[0] + '.png')
 
 
-def create_user(file_name):
-    user = {}
+def create_user(file_name: str) -> Dict[str, List[Set]]:
+    user: Dict[str, List[Set]] = {}
     with open(file_name) as current_file:
         file_content = current_file.readlines()
     for line in file_content:
@@ -47,22 +48,19 @@ def create_user(file_name):
 
 if __name__ == "__main__":
     file_name = 'distribution_138.txt'
-    user = create_user(file_name)
+    users = create_user(file_name)
 
-    send_distribution = {5: [],  10: [], 15: [], 20: [], 25: [], 30: [], 35: [],
-                        40: [], 45: [], 50: [], 55: [], 60: [], 65: [], 70: [], 75: [],
-                        80: [], 85: [], 90: [], 95: [], 100: []}
-    receive_distribution = {5: [],  10: [], 15: [], 20: [], 25: [], 30: [], 35: [],
-                            40: [], 45: [], 50: [], 55: [], 60: [], 65: [], 70: [], 75: [],
-                            80: [], 85: [], 90: [], 95: [], 100: []}
+    send_distribution: Dict[int, List[str]] = {5: [],  10: [], 15: [], 20: [], 25: [], 30: [], 35: [],
+    40: [], 45: [], 50: [], 55: [], 60: [], 65: [], 70: [], 75: [], 80: [], 85: [], 90: [], 95: [], 100: []}
+    receive_distribution: Dict[int, List[str]] = {5: [],  10: [], 15: [], 20: [], 25: [], 30: [], 35: [], 
+    40: [], 45: [], 50: [], 55: [], 60: [], 65: [], 70: [], 75: [], 80: [], 85: [], 90: [], 95: [], 100: []}
 
     all_user = 0
-    user_str_list = []
-    max_send = ["", 0]
-    max_recieved = ["", 0]
-    for user, stats in user.items():
-        send_uservalue = -1
-        received_uservalue = -1
+    max_send: List[Any] = ["", 0]
+    max_recieved: List[Any] = ["", 0]
+    for user, stats in users.items():
+        send_uservalue = -1.
+        received_uservalue = -1.
         len_stats0 = len(stats[0])
         len_stats1 = len(stats[1])
         if len_stats0 > 10 or len_stats1 > 10:
@@ -101,6 +99,7 @@ if __name__ == "__main__":
     plot(send_distribution, receive_distribution, all_send, all_receive, all_user, file_name)
     print("Max send: " + max_send[0] + ", with " + str(max_send[1]))
     print("Max received: " + max_recieved[0] + ", with " + str(max_recieved[1]))
+    # dump user data
     with open(file_name.split(".")[0] + "_UserStats.txt", "w") as current_file:
         for precentage, value in send_distribution.items():
             current_file.write("Users with less than " + str(precentage) + "% send:\n")

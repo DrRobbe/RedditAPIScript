@@ -1,27 +1,7 @@
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+import statistics
 from typing import Dict, List, Set, Any
-
-
-def plot(send, received, all_send, all_receive, all_user, file_name):
-    sender = []
-    interval = []
-    for key, value in send.items():
-        sender.append(len(value))
-    receiver = []
-    for _, value in received.items():
-        receiver.append(len(value))
-
-    combined = sender + list(reversed(receiver))[1:]
-    combined[len(sender) - 1] += receiver.pop()
-    interval = list(range(-95, 100, 5))
-
-    plt.bar(interval, combined, color="black", width=5)
-
-    plt.xlabel("Distribution")
-    plt.ylabel("Users")
-    plt.title("Counted " + str(all_user) + " user with more than 10 tips, " + str(all_send) + " send more, " + str(all_receive) + " received more!")
-    # plt.show()
-    plt.savefig(file_name.split(".")[0] + '.png')
 
 
 def create_user(file_name: str) -> Dict[str, List[Set]]:
@@ -45,11 +25,68 @@ def create_user(file_name: str) -> Dict[str, List[Set]]:
         user.pop(bot)
     return user
 
+def plot_tip_distribution(send: Dict[int, List[str]], received: Dict[int, List[str]], all_send: int, all_receive: int, all_user: int, file_name: str) -> None:
+    sender = []
+    interval = []
+    for _, value in send.items():
+        sender.append(len(value))
+    receiver = []
+    for _, value in received.items():
+        receiver.append(len(value))
+
+    combined = sender + list(reversed(receiver))[1:]
+    combined[len(sender) - 1] += receiver.pop()
+    interval = list(range(-95, 100, 5))
+
+    plt.bar(interval, combined, color="black", width=5)
+
+    plt.xlabel("Distribution")
+    plt.ylabel("Users")
+    plt.title("Counted " + str(all_user) + " user with more than 10 tips, " + str(all_send) + " send more, " + str(all_receive) + " received more!")
+    # plt.show()
+    plt.savefig(file_name.split(".")[0] + "_distribution" + '.png')
+
+def plot_tip_amount(users: Dict[str, List[Set]], file_name: str) -> None:
+    send_amount = []
+    receive_amount = []
+    for _, stats in users.items():
+        send_amount.append(len(stats[0]))
+        receive_amount.append(len(stats[1]))
+
+    send_amount = sorted(send_amount)
+    receive_amount = sorted(receive_amount)
+    send_all = len([positiv for positiv in send_amount if positiv > 0])
+    receive_all = len([positiv for positiv in receive_amount if positiv > 0])
+    send_mean = statistics.mean(send_amount)
+    receive_mean = statistics.mean(receive_amount)
+    send_median = statistics.median(send_amount)
+    receive_median = statistics.median(receive_amount)   
+    print("All users median send: " + send_median)
+    print("All users mean send: " + send_mean)
+    print("All users median recieved: " + receive_median)
+    print("All users mean recieved: " + receive_mean)
+    # Plotting x-axis and y-axis
+    plt.yscale("log")
+    # naming of x-axis and y-axis
+    plt.xlabel("User")
+    plt.ylabel("Tips")
+    plt.title("Tips send & received for " + str(len(users)) + " user.")
+
+    plt.plot(receive_amount, color='red', linestyle="-")
+    plt.plot(send_amount, color='blue', linestyle="--")
+
+    red_patch = mpatches.Patch(color='red', label="Received tips, User: " + str(receive_all) + ", Mean: " + str(round(receive_mean, 1)))
+    blue_patch = mpatches.Patch(color='blue', label="Send tips, User: " + str(send_all) + ", Mean: " + str(round(send_mean, 1)))
+    plt.grid(axis='y')
+    plt.legend(handles=[red_patch, blue_patch])
+    plt.subplots_adjust(bottom=0.2)
+    plt.savefig(file_name.split(".")[0] + "_tip_amount" + '.png')
 
 if __name__ == "__main__":
-    file_name = 'distribution_138.txt'
+    file_name = 'distribution_139.txt'
     users = create_user(file_name)
 
+    plot_tip_amount(users, file_name)
     send_distribution: Dict[int, List[str]] = {5: [],  10: [], 15: [], 20: [], 25: [], 30: [], 35: [],
     40: [], 45: [], 50: [], 55: [], 60: [], 65: [], 70: [], 75: [], 80: [], 85: [], 90: [], 95: [], 100: []}
     receive_distribution: Dict[int, List[str]] = {5: [],  10: [], 15: [], 20: [], 25: [], 30: [], 35: [], 
@@ -96,7 +133,7 @@ if __name__ == "__main__":
     for _, value in send_distribution.items():
         all_send += len(value)
     print("More send users: " + str(all_send))
-    plot(send_distribution, receive_distribution, all_send, all_receive, all_user, file_name)
+    plot_tip_distribution(send_distribution, receive_distribution, all_send, all_receive, all_user, file_name)
     print("Max send: " + max_send[0] + ", with " + str(max_send[1]))
     print("Max received: " + max_recieved[0] + ", with " + str(max_recieved[1]))
     # dump user data

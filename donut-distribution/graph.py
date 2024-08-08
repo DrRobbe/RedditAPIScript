@@ -1,5 +1,5 @@
 from pyvis.network import Network
-from typing import Dict, List, Any, Set
+from typing import Dict, List, Set
 
 
 def create_user(file_name: str) -> Dict[str, Set[str]]:
@@ -17,6 +17,7 @@ def create_user(file_name: str) -> Dict[str, Set[str]]:
             user[sender].add(receiver)
     return user
 
+
 def plot(users: Dict[str, Set[str]], output_file_name: str) -> None:
     net = Network(directed=False, select_menu=True, filter_menu=True, cdn_resources='remote')
     for key, value in users.items():
@@ -28,6 +29,7 @@ def plot(users: Dict[str, Set[str]], output_file_name: str) -> None:
     net.force_atlas_2based()
     net.save_graph(str(output_file_name))
     print("INFO: Created graph")
+
 
 if __name__ == "__main__":
     file_name = 'distribution_139.txt'

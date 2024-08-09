@@ -21,7 +21,10 @@ def create_user(file_name: str) -> Dict[str, Set[str]]:
 def plot(users: Dict[str, Set[str]], output_file_name: str) -> None:
     net = Network(directed=False, select_menu=True, filter_menu=True, cdn_resources='remote')
     for key, value in users.items():
-        net.add_node(key, color="#ff7373")
+        color='#3e66c1'        
+        if len(value) > 9:
+            color="#ff7373"
+        net.add_node(key, color=color)
     # send edges
     for key, value in users.items():
         for tip in value:

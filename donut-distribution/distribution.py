@@ -68,11 +68,11 @@ def plot_tip_amount(users: Dict[str, List[Set]], file_name: str) -> None:
     receive_mean = str(round(statistics.mean(receive_amount), 1))
     send_median = str(round(statistics.median(send_amount), 1))
     receive_median = str(round(statistics.median(receive_amount), 1))
-    print("All users: " + str(len(users)))
-    print("All users median send: " + send_median)
-    print("All users mean send: " + send_mean)
-    print("All users median recieved: " + receive_median)
-    print("All users mean recieved: " + receive_mean)
+    print("All users in this distribution: " + str(len(users)))
+    print("Median of send donuts over all users: " + send_median)
+    print("Mean of send donuts over all users: " + send_mean)
+    print("Median of recieved donuts over all users: " + receive_median)
+    print("Mean of recieved donuts over all users: " + receive_mean)
     # Plotting x-axis and y-axis
     plt.yscale("log")
     # naming of x-axis and y-axis
@@ -114,9 +114,9 @@ def analyse_amounts(amounts: Set[str]) -> None:
     amount_median = str(round(statistics.median(values), 1))
     amount_mean = str(round(statistics.mean(values), 1))
     amount_max = str(round(max(values), 1))
-    print(f"All amount max: {amount_max} ,from {max_sender} to {max_receiver}.")
-    print(f"All amount median: {amount_median}")
-    print(f"All amount mean: {amount_mean}")
+    print(f"Max donuts in one tip: {amount_max} ,from {max_sender} to {max_receiver}.")
+    print(f"Median of donuts per tip: {amount_median}")
+    print(f"Mean of donuts per tip: {amount_mean}")
     print(f"Top3 users with most donuts received via tips: ")
     number = 1
     for user in reversed(sorted(users_received_tip.items(), key=lambda item: item[1])[-3:]):
@@ -173,17 +173,17 @@ if __name__ == "__main__":
                 if precentage > received_uservalue:
                     receive_distribution[precentage].append(user + ": " + str(received_uservalue) + "%, send: " + str(len_stats0) + ", received: " + str(len_stats1))
                     break
-    print(f"Max send: {max_send[0]}, with {max_send[1]}")
-    print(f"Max received: {max_recieved[0]}, with {max_recieved[1]}")
-    print(f"All considered users: {all_user}")
+    print(f"Most tips send: {max_send[0]}, with {max_send[1]}")
+    print(f"Most tips received: {max_recieved[0]}, with {max_recieved[1]}")
+    print(f"Users with more than 10 tips send or received: {all_user}")
     all_receive = 0
     for _, value in receive_distribution.items():
         all_receive += len(value)
-    print(f"More receive users: {all_receive}")
+    print(f"Amount of users which received more tips: {all_receive}")
     all_send = 0
     for _, value in send_distribution.items():
         all_send += len(value)
-    print(f"More send users: {all_send}")
+    print(f"Amount of users which send more tips: {all_send}")
     plot_tip_distribution(send_distribution, receive_distribution, all_send, all_receive, all_user, file_name)
     # dump user data
     with open(file_name.split(".")[0] + "_UserStats.txt", "w") as current_file:

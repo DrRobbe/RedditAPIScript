@@ -1,20 +1,22 @@
 from pyvis.network import Network
 from typing import Dict, List, Set
+import json
 
 
 def create_user(file_name: str) -> Dict[str, Set[str]]:
-    user: Dict[str, List[Set]] = {}
-    with open(file_name) as current_file:
-        file_content = current_file.readlines()
-    for line in file_content:
-        if "- INFO - tip " in line:
-            sender = line.split(" [from]: ")[1].split(" [to]:")[0]
-            receiver = line.split(" [to]:")[1].split(" [amount]:")[0]
+    user: Dict[str, Set[str]] = {}
+    with open(file_name) as f:
+        file_content = json.load(f)
+    for values in file_content:
+        if values["to_user_registered"] == 1:
+            sender = values["from_user"]
+            receiver = values["to_user"]
             if sender not in user:
                 user[sender] = set()
             if receiver not in user:
                 user[receiver] = set()
             user[sender].add(receiver)
+    print(f"Found {len(user)} user.")
     return user
 
 
@@ -35,6 +37,6 @@ def plot(users: Dict[str, Set[str]], output_file_name: str) -> None:
 
 
 if __name__ == "__main__":
-    file_name = 'distribution_139.txt'
+    file_name = 'tips_round_139.json'
     users = create_user(file_name)
-    plot(users, "D:\\Scripts\\RedditAPIScript\\donut-distribution\\user_graph.html")
+    plot(users, "D:\\Scripts\\RedditAPIScript\\index.html")

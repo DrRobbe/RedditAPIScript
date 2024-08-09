@@ -1,32 +1,28 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import statistics
+import json
 from typing import Dict, List, Set, Tuple, Any
 
 
-def create_user(file_name: str) -> Tuple[Dict[str, List[Set]], Set[str]]:
-    user: Dict[str, List[Set]] = {}
-    amounts = set()
-    with open(file_name) as current_file:
-        file_content = current_file.readlines()
-    for line in file_content:
-        if "- INFO - tip " in line:
-            number = line.split("INFO - tip [")[1].split(" of ")[0]
-            sender = line.split(" [from]: ")[1].split(" [to]:")[0]
-            receiver = line.split(" [to]:")[1].split(" [amount]:")[0]
-            amount = line.split(" [amount]: ")[1].split(" ")[0]
-            id_amount = number + "-" + amount + "-" + sender + "-" + receiver
-            amounts.add(id_amount)
+def create_user(file_name: str) -> Tuple[Dict[str, List[int]], List[str]]:
+    user: Dict[str, List[int]] = {}
+    amounts = []
+    with open(file_name) as f:
+        file_content = json.load(f)
+    for values in file_content:
+        if values["to_user_registered"] == 1:
+            sender = values["from_user"]
+            receiver = values["to_user"]
+            amount = values["amount"]
+            id_amount = str(amount) + "-" + sender + "-" + receiver
+            amounts.append(id_amount)
             if sender not in user:
-                user[sender] = [set(), set()]
+                user[sender] = [0, 0]
             if receiver not in user:
-                user[receiver] = [set(), set()]
-            user[sender][0].add(number)
-            user[receiver][1].add(number)
-    # remove bots
-    bots = ["AutoModerator", "donut-bot"]
-    for bot in bots:
-        user.pop(bot)
+                user[receiver] = [0, 0]
+            user[sender][0] += 1
+            user[receiver][1] += 1
     return user, amounts
 
 
@@ -57,8 +53,8 @@ def plot_tip_amount(users: Dict[str, List[Set]], file_name: str) -> None:
     send_amount = []
     receive_amount = []
     for _, stats in users.items():
-        send_amount.append(len(stats[0]))
-        receive_amount.append(len(stats[1]))
+        send_amount.append(stats[0])
+        receive_amount.append(stats[1])
 
     send_amount = sorted(send_amount)
     receive_amount = sorted(receive_amount)
@@ -95,9 +91,9 @@ def analyse_amounts(amounts: Set[str]) -> None:
     users_received_tip: Dict[str, float] = {}
     users_send_tip: Dict[str, float] = {}
     for id_amount in amounts:
-        current_amount = float(id_amount.split("-")[1])
-        sender = id_amount.split("-")[2]
-        receiver = id_amount.split("-")[3]
+        current_amount = float(id_amount.split("-")[0])
+        sender = id_amount.split("-")[1]
+        receiver = id_amount.split("-")[2]
         if max(values) < current_amount:
             max_sender = sender
             max_receiver = receiver
@@ -127,7 +123,7 @@ def analyse_amounts(amounts: Set[str]) -> None:
 
 
 if __name__ == "__main__":
-    file_name = 'distribution_138.txt'
+    file_name = 'tips_round_139.json'
     users, amounts = create_user(file_name)
     print("All users in this distribution: " + str(len(users)))
     print("===== Donuts =====")
@@ -146,8 +142,8 @@ if __name__ == "__main__":
     for user, stats in users.items():
         send_uservalue = -1.
         received_uservalue = -1.
-        len_stats0 = len(stats[0])
-        len_stats1 = len(stats[1])
+        len_stats0 = stats[0]
+        len_stats1 = stats[1]
         all_send_tips += len_stats0
         if len_stats0 > 10 or len_stats1 > 10:
             all_user += 1

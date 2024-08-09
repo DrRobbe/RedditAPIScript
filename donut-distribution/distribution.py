@@ -64,15 +64,12 @@ def plot_tip_amount(users: Dict[str, List[Set]], file_name: str) -> None:
     receive_amount = sorted(receive_amount)
     send_all = len([positiv for positiv in send_amount if positiv > 0])
     receive_all = len([positiv for positiv in receive_amount if positiv > 0])
-    send_mean = str(round(statistics.mean(send_amount), 1))
-    receive_mean = str(round(statistics.mean(receive_amount), 1))
+    send_mean = str(round(statistics.mean(send_amount), 0))
+    receive_mean = str(round(statistics.mean(receive_amount), 0))
     send_median = str(round(statistics.median(send_amount), 1))
     receive_median = str(round(statistics.median(receive_amount), 1))
-    print("All users in this distribution: " + str(len(users)))
-    print("Median of send donuts over all users: " + send_median)
-    print("Mean of send donuts over all users: " + send_mean)
-    print("Median of recieved donuts over all users: " + receive_median)
-    print("Mean of recieved donuts over all users: " + receive_mean)
+    print("Median tip send per user: " + send_median)
+    print("Median tip recieved per user: " + receive_median)
     # Plotting x-axis and y-axis
     plt.yscale("log")
     # naming of x-axis and y-axis
@@ -130,10 +127,11 @@ def analyse_amounts(amounts: Set[str]) -> None:
 
 
 if __name__ == "__main__":
-    file_name = 'distribution_139.txt'
+    file_name = 'distribution_138.txt'
     users, amounts = create_user(file_name)
+    print("All users in this distribution: " + str(len(users)))
+    print("===== Donuts =====")
     analyse_amounts(amounts)
-    plot_tip_amount(users, file_name)
     send_distribution: Dict[int, List[str]] = {5: [],  10: [], 15: [], 20: [], 25: [], 30: [], 35: [],
                                                40: [], 45: [], 50: [], 55: [], 60: [], 65: [], 70: [],
                                                75: [], 80: [], 85: [], 90: [], 95: [], 100: []}
@@ -144,11 +142,13 @@ if __name__ == "__main__":
     all_user = 0
     max_send: List[Any] = ["", 0]
     max_recieved: List[Any] = ["", 0]
+    all_send_tips = 0
     for user, stats in users.items():
         send_uservalue = -1.
         received_uservalue = -1.
         len_stats0 = len(stats[0])
         len_stats1 = len(stats[1])
+        all_send_tips += len_stats0
         if len_stats0 > 10 or len_stats1 > 10:
             all_user += 1
             # more send
@@ -173,6 +173,10 @@ if __name__ == "__main__":
                 if precentage > received_uservalue:
                     receive_distribution[precentage].append(user + ": " + str(received_uservalue) + "%, send: " + str(len_stats0) + ", received: " + str(len_stats1))
                     break
+    print("===== Tips =====")
+    print(f"All tips send: {all_send_tips}")
+    print(f"Mean tip send per user: {round(all_send_tips/len(users), 1)}")
+    plot_tip_amount(users, file_name)
     print(f"Most tips send: {max_send[0]}, with {max_send[1]}")
     print(f"Most tips received: {max_recieved[0]}, with {max_recieved[1]}")
     print(f"Users with more than 10 tips send or received: {all_user}")

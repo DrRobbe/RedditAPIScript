@@ -1,11 +1,12 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import statistics
-from typing import Dict, List, Set, Any
+from typing import Dict, List, Set, Tuple, Any
 
 
-def create_user(file_name: str) -> Dict[str, List[Set]]:
+def create_user(file_name: str) -> Tuple[Dict[str, List[Set]], Set[str]]:
     user: Dict[str, List[Set]] = {}
+    amounts = set()
     with open(file_name) as current_file:
         file_content = current_file.readlines()
     for line in file_content:
@@ -13,6 +14,9 @@ def create_user(file_name: str) -> Dict[str, List[Set]]:
             number = line.split("INFO - tip [")[1].split(" of ")[0]
             sender = line.split(" [from]: ")[1].split(" [to]:")[0]
             receiver = line.split(" [to]:")[1].split(" [amount]:")[0]
+            amount = line.split(" [amount]: ")[1].split(" ")[0]
+            id_amount = number + "-" + amount + "-" + sender + "-" + receiver
+            amounts.add(id_amount)
             if sender not in user:
                 user[sender] = [set(), set()]
             if receiver not in user:
@@ -23,7 +27,7 @@ def create_user(file_name: str) -> Dict[str, List[Set]]:
     bots = ["AutoModerator", "donut-bot"]
     for bot in bots:
         user.pop(bot)
-    return user
+    return user, amounts
 
 
 def plot_tip_distribution(send: Dict[int, List[str]], received: Dict[int, List[str]], all_send: int, all_receive: int, all_user: int, file_name: str) -> None:
@@ -87,10 +91,48 @@ def plot_tip_amount(users: Dict[str, List[Set]], file_name: str) -> None:
     plt.savefig(file_name.split(".")[0] + "_tip_amount" + '.png')
 
 
+def analyse_amounts(amounts: Set[str]) -> None:
+    values = [0]
+    max_sender = ""
+    max_receiver = ""
+    users_received_tip: Dict[str, float] = {}
+    users_send_tip: Dict[str, float] = {}
+    for id_amount in amounts:
+        current_amount = float(id_amount.split("-")[1])
+        sender = id_amount.split("-")[2]
+        receiver = id_amount.split("-")[3]
+        if max(values) < current_amount:
+            max_sender = sender
+            max_receiver = receiver
+        values.append(current_amount)
+        if receiver not in users_received_tip:
+            users_received_tip[receiver] = 0.
+        users_received_tip[receiver] += current_amount
+        if sender not in users_send_tip:
+            users_send_tip[sender] = 0.
+        users_send_tip[sender] += current_amount
+    amount_median = str(round(statistics.median(values), 1))
+    amount_mean = str(round(statistics.mean(values), 1))
+    amount_max = str(round(max(values), 1))
+    print(f"All amount max: {amount_max} ,from {max_sender} to {max_receiver}.")
+    print(f"All amount median: {amount_median}")
+    print(f"All amount mean: {amount_mean}")
+    print(f"Top3 users with most donuts received via tips: ")
+    number = 1
+    for user in reversed(sorted(users_received_tip.items(), key=lambda item: item[1])[-3:]):
+        print(f"\t{number}. {user[0]}, with {round(user[1],1)} donuts")
+        number += 1
+    print(f"Top3 users with most donuts send via tips: ")
+    number = 1
+    for user in reversed(sorted(users_send_tip.items(), key=lambda item: item[1])[-3:]):
+        print(f"\t{number}. {user[0]}, with {round(user[1],1)} donuts")
+        number += 1
+
+
 if __name__ == "__main__":
     file_name = 'distribution_139.txt'
-    users = create_user(file_name)
-
+    users, amounts = create_user(file_name)
+    analyse_amounts(amounts)
     plot_tip_amount(users, file_name)
     send_distribution: Dict[int, List[str]] = {5: [],  10: [], 15: [], 20: [], 25: [], 30: [], 35: [],
                                                40: [], 45: [], 50: [], 55: [], 60: [], 65: [], 70: [],
@@ -131,25 +173,25 @@ if __name__ == "__main__":
                 if precentage > received_uservalue:
                     receive_distribution[precentage].append(user + ": " + str(received_uservalue) + "%, send: " + str(len_stats0) + ", received: " + str(len_stats1))
                     break
-    print("Max send: " + max_send[0] + ", with " + str(max_send[1]))
-    print("Max received: " + max_recieved[0] + ", with " + str(max_recieved[1]))
-    print("All considered users: " + str(all_user))
+    print(f"Max send: {max_send[0]}, with {max_send[1]}")
+    print(f"Max received: {max_recieved[0]}, with {max_recieved[1]}")
+    print(f"All considered users: {all_user}")
     all_receive = 0
     for _, value in receive_distribution.items():
         all_receive += len(value)
-    print("More receive users: " + str(all_receive))
+    print(f"More receive users: {all_receive}")
     all_send = 0
     for _, value in send_distribution.items():
         all_send += len(value)
-    print("More send users: " + str(all_send))
+    print(f"More send users: {all_send}")
     plot_tip_distribution(send_distribution, receive_distribution, all_send, all_receive, all_user, file_name)
     # dump user data
     with open(file_name.split(".")[0] + "_UserStats.txt", "w") as current_file:
         for precentage, value in send_distribution.items():
-            current_file.write("Users with less than " + str(precentage) + "% send:\n")
+            current_file.write(f"Users with less than {precentage}% send:\n")
             for line in value:
                 current_file.write("\t" + line + "\n")
         for precentage, value in sorted(list(receive_distribution.items()), reverse=True):
-            current_file.write("Users with less than " + str(precentage) + "% receive\n")
+            current_file.write(f"Users with less than {precentage}% receive\n")
             for line in value:
                 current_file.write("\t" + line + "\n")

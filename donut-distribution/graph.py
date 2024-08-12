@@ -1,5 +1,5 @@
 from pyvis.network import Network
-from typing import Dict, List, Set
+from typing import Dict, Set
 import json
 
 

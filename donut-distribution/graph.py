@@ -42,4 +42,4 @@ if __name__ == "__main__":
     local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
     file_name = local_path + 'input\\tips_round_140.json'
     users = create_user(file_name)
-    plot(users, local_path + 'graph_140.html')
+    plot(users, local_path + 'output\\graph_140.html')

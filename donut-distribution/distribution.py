@@ -124,7 +124,7 @@ def analyse_amounts(amounts: Set[str]) -> None:
 
 if __name__ == "__main__":
     path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
-    file_name = path + 'input\\tips_round_139.json'
+    file_name = path + 'input\\tips_round_140.json'
     users, amounts = create_user(file_name)
     print("All registered users in this distribution: " + str(len(users)))
     print("===== Donuts =====")
@@ -137,45 +137,46 @@ if __name__ == "__main__":
                                                   75: [], 80: [], 85: [], 90: [], 95: [], 100: []}
 
     all_user = 0
-    max_send: List[Any] = ["", 0]
-    max_recieved: List[Any] = ["", 0]
     all_send_tips = 0
+    # normal distribution for 10+ send/received users
     for user, stats in users.items():
         send_uservalue = -1.
         received_uservalue = -1.
-        len_stats0 = stats[0]
-        len_stats1 = stats[1]
-        all_send_tips += len_stats0
-        if len_stats0 > 10 or len_stats1 > 10:
+        send_tips = stats[0]
+        received_tips = stats[1]
+        all_send_tips += send_tips
+        if send_tips > 10 or received_tips > 10:
             all_user += 1
             # more send
-            if len_stats0 >= len_stats1:
-                send_uservalue = round(100 * len_stats1/len_stats0, 2)
+            if send_tips >= received_tips:
+                send_uservalue = round(100 * received_tips/send_tips, 2)
             # more received
-            if len_stats1 > len_stats0:
-                received_uservalue = round(100 * len_stats0/len_stats1, 2)
-            if max_recieved[1] < len_stats1:
-                max_recieved[1] = len_stats1
-                max_recieved[0] = user
-            if max_send[1] < len_stats0:
-                max_send[1] = len_stats0
-                max_send[0] = user
+            if received_tips > send_tips:
+                received_uservalue = round(100 * send_tips/received_tips, 2)
         if send_uservalue > -1:
             for precentage, _ in send_distribution.items():
                 if precentage >= send_uservalue:
-                    send_distribution[precentage].append(user + ": " + str(send_uservalue) + "%, send: " + str(len_stats0) + ", received: " + str(len_stats1))
+                    send_distribution[precentage].append(user + ": " + str(send_uservalue) + "%, send: " + str(send_tips) + ", received: " + str(received_tips))
                     break
         if received_uservalue > -1:
             for precentage, _ in receive_distribution.items():
                 if precentage > received_uservalue:
-                    receive_distribution[precentage].append(user + ": " + str(received_uservalue) + "%, send: " + str(len_stats0) + ", received: " + str(len_stats1))
+                    receive_distribution[precentage].append(user + ": " + str(received_uservalue) + "%, send: " + str(send_tips) + ", received: " + str(received_tips))
                     break
     print("===== Tips =====")
     print(f"All tips send: {all_send_tips}")
     print(f"Mean tip send per user: {round(all_send_tips/len(users), 1)}")
     plot_tip_amount(users, file_name)
-    print(f"Most tips send: {max_send[0]}, with {max_send[1]}")
-    print(f"Most tips received: {max_recieved[0]}, with {max_recieved[1]}")
+    print(f"Top3 users with most tips received: ")
+    number = 1
+    for user in reversed(sorted(users.items(), key=lambda item: item[1][1])[-3:]):
+        print(f"\t{number}. {user[0]}, with {round(user[1][1],1)} tips")
+        number += 1
+    print(f"Top3 users with most tips send: ")
+    number = 1
+    for user in reversed(sorted(users.items(), key=lambda item: item[1][0])[-3:]):
+        print(f"\t{number}. {user[0]}, with {round(user[1][0],1)} tips")
+        number += 1
     print(f"Users with more than 10 tips send or received: {all_user}")
     all_receive = 0
     for _, value in receive_distribution.items():
@@ -187,7 +188,7 @@ if __name__ == "__main__":
     print(f"Amount of users which send more tips: {all_send}")
     plot_tip_distribution(send_distribution, receive_distribution, all_send, all_receive, all_user, file_name)
     # dump user data
-    with open(file_name.split(".")[0] + "_UserStats.txt", "w") as current_file:
+    with open(path + 'output\\UserStats' + file_name.split("_")[2].split(".")[0] + "_for10tipsSendReceived.txt", "w") as current_file:
         for precentage, value in send_distribution.items():
             current_file.write(f"Users with less than {precentage}% send:\n")
             for line in value:

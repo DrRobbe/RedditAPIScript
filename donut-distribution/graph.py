@@ -23,9 +23,11 @@ def create_user(file_name: str) -> Dict[str, Set[str]]:
 def plot(users: Dict[str, Set[str]], output_file_name: str) -> None:
     net = Network(directed=True, select_menu=True, filter_menu=True, cdn_resources='remote')
     for key, value in users.items():
-        color='#3e66c1'        
-        if len(value) > 9:
-            color="#ff7373"
+        color = '#3e66c1'        
+        if len(value) > 99:
+            color = "#ff8800"
+        elif len(value) > 9:
+            color = "#ff7373"
         net.add_node(key, color=color)
     # send edges
     for key, value in users.items():
@@ -37,6 +39,7 @@ def plot(users: Dict[str, Set[str]], output_file_name: str) -> None:
 
 
 if __name__ == "__main__":
-    file_name = 'tips_round_139.json'
+    local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
+    file_name = local_path + 'input\\tips_round_140.json'
     users = create_user(file_name)
-    plot(users, "D:\\Scripts\\RedditAPIScript\\index.html")
+    plot(users, local_path + 'graph_140.html')

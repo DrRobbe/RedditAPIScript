@@ -123,9 +123,10 @@ def analyse_amounts(amounts: Set[str]) -> None:
 
 
 if __name__ == "__main__":
-    file_name = 'tips_round_139.json'
+    path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
+    file_name = path + 'input\\tips_round_139.json'
     users, amounts = create_user(file_name)
-    print("All users in this distribution: " + str(len(users)))
+    print("All registered users in this distribution: " + str(len(users)))
     print("===== Donuts =====")
     analyse_amounts(amounts)
     send_distribution: Dict[int, List[str]] = {5: [],  10: [], 15: [], 20: [], 25: [], 30: [], 35: [],

@@ -1,14 +1,16 @@
 from pyvis.network import Network
 from typing import Dict, Set
+from datetime import datetime
 import json
 
 
-def create_user(file_name: str) -> Dict[str, Set[str]]:
+def create_user(file_name: str, date: datetime) -> Dict[str, Set[str]]:
     user: Dict[str, Set[str]] = {}
     with open(file_name) as f:
         file_content = json.load(f)
     for values in file_content:
-        if values["to_user_registered"] == 1:
+        time = str(values["created_date"]).split(".")[0]
+        if values["to_user_registered"] == 1 and datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date:
             sender = values["from_user"]
             receiver = values["to_user"]
             if sender not in user:
@@ -35,11 +37,13 @@ def plot(users: Dict[str, Set[str]], output_file_name: str) -> None:
             net.add_edge(key, tip, color='#5b5b5b')
     net.force_atlas_2based()
     net.save_graph(str(output_file_name))
-    print("INFO: Created graph")
+    print("Created graph: " + output_file_name)
 
 
 if __name__ == "__main__":
+    date_str = "2024-08-07"
+    date = datetime.strptime(f"{date_str} 00:00:00", '%Y-%m-%d %H:%M:%S')
     local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
     file_name = local_path + 'input\\tips_round_140.json'
-    users = create_user(file_name)
-    plot(users, local_path + 'output\\graph_140.html')
+    users = create_user(file_name, date)
+    plot(users, local_path + f'output\\graph_140_{date_str}.html')

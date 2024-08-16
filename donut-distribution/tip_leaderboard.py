@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from typing import Dict, List, Tuple, Any
 
+
 def create_user(file_name: str, date: datetime) -> Tuple[Dict[str, Dict[str, List[float]]], Dict[str, Dict[str, List[float]]]]:
     user_send: Dict[str, Dict[str, List[float]]] = {}
     user_receive: Dict[str, Dict[str, List[float]]] = {}
@@ -17,7 +18,7 @@ def create_user(file_name: str, date: datetime) -> Tuple[Dict[str, Dict[str, Lis
             if receiver not in user_receive:
                 user_receive[receiver] = {}
             if receiver not in user_send[sender]:
-                user_send[sender][receiver] = [0. , 0.]
+                user_send[sender][receiver] = [0., 0.]
             if sender not in user_receive[receiver]:
                 user_receive[receiver][sender] = [0., 0.]
             user_send[sender][receiver][0] += 1.
@@ -38,7 +39,7 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
         filler = "Received"
         filler1 = "received from"
     users_tips: Dict[str, List[Any]] = {}
-    users_amount: Dict[str, List[Any]] = {} 
+    users_amount: Dict[str, List[Any]] = {}
     for user, partners in users.items():
         if user not in users_tips:
             users_tips[user] = [0., '']
@@ -75,11 +76,11 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
     with open(f'output\\{filler}_since{str(date).split(" ")[0]}-tabel.txt', 'w') as f:
         for line in output:
             f.write(f"{line}\n")
-    
+
 
 if __name__ == "__main__":
     local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
-    date = datetime.strptime("2024-08-05 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date = datetime.strptime("2024-06-05 00:00:00", '%Y-%m-%d %H:%M:%S')
     print("Check all tips since :" + str(date))
     file_name = local_path + 'input\\tips_round_140.json'
     user_send, user_receive = create_user(file_name, date)

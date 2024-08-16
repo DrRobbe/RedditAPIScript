@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import statistics
 import json
-from typing import Dict, List, Set, Tuple, Any
+from typing import Dict, List, Set, Tuple
 
 
 def create_user(file_name: str) -> Tuple[Dict[str, List[int]], List[str]]:
@@ -49,9 +49,9 @@ def plot_tip_distribution(send: Dict[int, List[str]], received: Dict[int, List[s
     plt.savefig(file_name.split(".")[0] + "_distribution" + '.png')
 
 
-def plot_tip_amount(users: Dict[str, List[Set]], file_name: str) -> None:
-    send_amount = []
-    receive_amount = []
+def plot_tip_amount(users: Dict[str, List[int]], file_name: str) -> None:
+    send_amount: List[int] = []
+    receive_amount: List[int] = []
     for _, stats in users.items():
         send_amount.append(stats[0])
         receive_amount.append(stats[1])
@@ -84,8 +84,8 @@ def plot_tip_amount(users: Dict[str, List[Set]], file_name: str) -> None:
     plt.savefig(file_name.split(".")[0] + "_tip_amount" + '.png')
 
 
-def analyse_amounts(amounts: Set[str]) -> None:
-    values = [0]
+def analyse_amounts(amounts: List[str]) -> None:
+    values = [0.]
     max_sender = ""
     max_receiver = ""
     users_received_tip: Dict[str, float] = {}
@@ -110,12 +110,12 @@ def analyse_amounts(amounts: Set[str]) -> None:
     print(f"Max donuts in one tip: {amount_max} ,from {max_sender} to {max_receiver}.")
     print(f"Median of donuts per tip: {amount_median}")
     print(f"Mean of donuts per tip: {amount_mean}")
-    print(f"Top3 users with most donuts received via tips: ")
+    print("Top3 users with most donuts received via tips: ")
     number = 1
     for user in reversed(sorted(users_received_tip.items(), key=lambda item: item[1])[-3:]):
         print(f"\t{number}. {user[0]}, with {round(user[1],1)} donuts")
         number += 1
-    print(f"Top3 users with most donuts send via tips: ")
+    print("Top3 users with most donuts send via tips: ")
     number = 1
     for user in reversed(sorted(users_send_tip.items(), key=lambda item: item[1])[-3:]):
         print(f"\t{number}. {user[0]}, with {round(user[1],1)} donuts")
@@ -129,10 +129,10 @@ if __name__ == "__main__":
     print("All registered users in this distribution: " + str(len(users)))
     print("===== Donuts =====")
     analyse_amounts(amounts)
-    send_distribution: Dict[int, List[str]] = {5: [],  10: [], 15: [], 20: [], 25: [], 30: [], 35: [],
+    send_distribution: Dict[int, List[str]] = {5: [], 10: [], 15: [], 20: [], 25: [], 30: [], 35: [],
                                                40: [], 45: [], 50: [], 55: [], 60: [], 65: [], 70: [],
                                                75: [], 80: [], 85: [], 90: [], 95: [], 100: []}
-    receive_distribution: Dict[int, List[str]] = {5: [],  10: [], 15: [], 20: [], 25: [], 30: [], 35: [],
+    receive_distribution: Dict[int, List[str]] = {5: [], 10: [], 15: [], 20: [], 25: [], 30: [], 35: [],
                                                   40: [], 45: [], 50: [], 55: [], 60: [], 65: [], 70: [],
                                                   75: [], 80: [], 85: [], 90: [], 95: [], 100: []}
 
@@ -149,10 +149,10 @@ if __name__ == "__main__":
             all_user += 1
             # more send
             if send_tips >= received_tips:
-                send_uservalue = round(100 * received_tips/send_tips, 2)
+                send_uservalue = round(100 * received_tips / send_tips, 2)
             # more received
             if received_tips > send_tips:
-                received_uservalue = round(100 * send_tips/received_tips, 2)
+                received_uservalue = round(100 * send_tips / received_tips, 2)
         if send_uservalue > -1:
             for precentage, _ in send_distribution.items():
                 if precentage >= send_uservalue:
@@ -167,15 +167,15 @@ if __name__ == "__main__":
     print(f"All tips send: {all_send_tips}")
     print(f"Mean tips send per user: {round(all_send_tips/len(users), 1)}")
     plot_tip_amount(users, file_name)
-    print(f"Top3 users with most tips received: ")
+    print("Top3 users with most tips received: ")
     number = 1
     for user in reversed(sorted(users.items(), key=lambda item: item[1][1])[-3:]):
-        print(f"\t{number}. {user[0]}, with {round(user[1][1],1)} tips")
+        print(f"\t{number}. {user[0]}, with {round(user[1][1], 1)} tips")
         number += 1
-    print(f"Top3 users with most tips send: ")
+    print("Top3 users with most tips send: ")
     number = 1
     for user in reversed(sorted(users.items(), key=lambda item: item[1][0])[-3:]):
-        print(f"\t{number}. {user[0]}, with {round(user[1][0],1)} tips")
+        print(f"\t{number}. {user[0]}, with {round(user[1][0], 1)} tips")
         number += 1
     print(f"Users with more than 10 tips send or received: {all_user}")
     all_receive = 0

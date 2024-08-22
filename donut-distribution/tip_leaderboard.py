@@ -30,7 +30,7 @@ def create_user(file_name: str, date: datetime) -> Tuple[Dict[str, Dict[str, Lis
     return user_send, user_receive
 
 
-def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, date: datetime) -> None:
+def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, date: datetime) -> List[str]:
     list_length = 100
     filler = "Send"
     filler1 = "given to"
@@ -63,26 +63,42 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
     number = 1
     output = [f"| No. | Name | {filler} tips | Most tips {filler1} | {filler} Donuts | Most donuts {filler1} | Average Donuts per tip |",
               "|:-|:--------------|:-------:|:---------------------:|:------:|:---------------------:|:------------:|"]
-    for user in reversed(sorted(users_tips.items(), key=lambda item: item[1][0])[-list_length:]):
-        max_partner = str(user[1][1]).split("$$$")[0]
-        max_amount = str(user[1][1]).split("$$$")[1]
-        donuts = users_amount[user[0]][0]
-        tips = user[1][0]
-        max_donut_partner = users_amount[user[0]][1].split("$$$")[0]
-        max_donut_amount = users_amount[user[0]][1].split("$$$")[1]
-        output.append(f"| {number} | {user[0]} | {int(tips)} | {max_partner} ({max_amount}) | {donuts} | {max_donut_partner} ({max_donut_amount}) | {round(donuts/tips, 1)} |")
+    for person in reversed(sorted(users_tips.items(), key=lambda item: item[1][0])[-list_length:]):
+        max_partner = str(person[1][1]).split("$$$")[0]
+        max_amount = str(person[1][1]).split("$$$")[1]
+        donuts = users_amount[person[0]][0]
+        tips = person[1][0]
+        max_donut_partner = users_amount[person[0]][1].split("$$$")[0]
+        max_donut_amount = users_amount[person[0]][1].split("$$$")[1]
+        output.append(f"| {number} | {person[0]} | {int(tips)} | {max_partner} ({max_amount}) | {donuts} | {max_donut_partner} ({max_donut_amount}) | {round(donuts/tips, 1)} |")
         number += 1
 
     with open(f'output\\{filler}_since{str(date).split(" ")[0]}-tabel.txt', 'w') as f:
         for line in output:
             f.write(f"{line}\n")
+    return output
 
 
 if __name__ == "__main__":
     local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
-    date = datetime.strptime("2024-06-05 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date = datetime.strptime("2024-08-12 00:00:00", '%Y-%m-%d %H:%M:%S')
     print("Check all tips since :" + str(date))
     file_name = local_path + 'input\\tips_round_140.json'
     user_send, user_receive = create_user(file_name, date)
-    create_table(user_send, True, date)
-    create_table(user_receive, False, date)
+    send_ranks = create_table(user_send, True, date)
+    received_ranks = create_table(user_receive, False, date)
+    # calculate rank differenc
+    ranked_difference = {}
+    for entry in send_ranks[2:]:
+        user = entry.split(" | ")[1]
+        rank = int(entry.split(" | ")[0][2:])
+        for data in received_ranks[2:]:
+            if user in data.split(" | ")[1]:
+                rank2 = int(data.split(" | ")[0][2:])
+                ranked_difference[user] = rank-rank2
+    print("Top 3 users with highest rank differnce of both lists, with lower receive rank:")
+    for person in sorted(ranked_difference.items(), key=lambda item: item[1])[:3]:
+        print(f"* {person[0]} - rank difference: {abs(person[1])}")
+    print("Top 3 users with highest rank differnce of both lists, with lower send rank:")
+    for person in reversed(sorted(ranked_difference.items(), key=lambda item: item[1])[-3:]):
+        print(f"* {person[0]} - rank difference: {abs(person[1])}")

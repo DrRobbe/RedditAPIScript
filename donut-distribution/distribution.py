@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import statistics
 import json
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Tuple
 
 
 def create_user(file_name: str) -> Tuple[Dict[str, List[int]], List[str]]:

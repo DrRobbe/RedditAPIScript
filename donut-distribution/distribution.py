@@ -107,7 +107,8 @@ def analyse_amounts(amounts: List[str]) -> None:
     amount_median = str(round(statistics.median(values), 1))
     amount_mean = str(round(statistics.mean(values), 1))
     amount_max = str(round(max(values), 1))
-    print(f"Max donuts in one tip: {amount_max} ,from {max_sender} to {max_receiver}.")
+    print(f"All Donuts send: {round(sum(values), 1)}")
+    print(f"Max donuts in one tip: {amount_max}, from {max_sender} to {max_receiver}.")
     print(f"Median of donuts per tip: {amount_median}")
     print(f"Mean of donuts per tip: {amount_mean}")
     print("Top3 users with most donuts received via tips: ")
@@ -121,6 +122,31 @@ def analyse_amounts(amounts: List[str]) -> None:
         print(f"\t{number}. {user[0]}, with {round(user[1],1)} donuts")
         number += 1
 
+
+def analyse_tips(users: Dict[str, List[int]], all_send_tips: int) -> None:
+    print(f"All tips send: {all_send_tips}")
+    print(f"Mean tips send per user: {round(all_send_tips/len(users), 1)}")
+    plot_tip_amount(users, file_name)
+    print("Top3 users with most tips received: ")
+    number = 1
+    for user in reversed(sorted(users.items(), key=lambda item: item[1][1])[-3:]):
+        print(f"\t{number}. {user[0]}, with {round(user[1][1], 1)} tips")
+        number += 1
+    print("Top3 users with most tips send: ")
+    number = 1
+    for user in reversed(sorted(users.items(), key=lambda item: item[1][0])[-3:]):
+        print(f"\t{number}. {user[0]}, with {round(user[1][0], 1)} tips")
+        number += 1
+        # calculate tip difference
+    tip_difference = {}
+    for user, tips in users.items():
+        tip_difference[user] = tips[0] - tips[1]
+    print("Top 5 users with highest tip difference, with more received tips:")
+    for person in sorted(tip_difference.items(), key=lambda item: item[1])[:5]:
+        print(f"* {person[0]} - tip difference: {abs(person[1])} - tips {round(100 * users[person[0]][0]/users[person[0]][1], 1)}% of the time back.")
+    print("Top 5 users with highest tip difference, with more send tips:")
+    for person in reversed(sorted(tip_difference.items(), key=lambda item: item[1])[-5:]):
+        print(f"* {person[0]} - tip difference: {person[1]} - gets {round(100 * users[person[0]][1]/users[person[0]][0], 1)}% of the time tipped back.")
 
 if __name__ == "__main__":
     path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
@@ -164,19 +190,7 @@ if __name__ == "__main__":
                     receive_distribution[precentage].append(user + ": " + str(received_uservalue) + "%, send: " + str(send_tips) + ", received: " + str(received_tips))
                     break
     print("===== Tips =====")
-    print(f"All tips send: {all_send_tips}")
-    print(f"Mean tips send per user: {round(all_send_tips/len(users), 1)}")
-    plot_tip_amount(users, file_name)
-    print("Top3 users with most tips received: ")
-    number = 1
-    for user in reversed(sorted(users.items(), key=lambda item: item[1][1])[-3:]):
-        print(f"\t{number}. {user[0]}, with {round(user[1][1], 1)} tips")
-        number += 1
-    print("Top3 users with most tips send: ")
-    number = 1
-    for user in reversed(sorted(users.items(), key=lambda item: item[1][0])[-3:]):
-        print(f"\t{number}. {user[0]}, with {round(user[1][0], 1)} tips")
-        number += 1
+    analyse_tips(users, all_send_tips)
     print(f"Users with more than 10 tips send or received: {all_user}")
     all_receive = 0
     for _, value in receive_distribution.items():

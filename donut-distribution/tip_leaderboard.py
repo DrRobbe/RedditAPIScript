@@ -81,10 +81,19 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 if __name__ == "__main__":
     local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
-    date = datetime.strptime("2024-08-12 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date = datetime.strptime("2024-08-19 00:00:00", '%Y-%m-%d %H:%M:%S')
     print("Check all tips since :" + str(date))
     file_name = local_path + 'input\\tips_round_140.json'
     user_send, user_receive = create_user(file_name, date)
+    # global data
+    all_tips = 0
+    all_donuts = 0.
+    for _, data in user_send.items():
+        for _, values in data.items():
+            all_tips += values[0]
+            all_donuts += values[1]
+    print(f"{all_tips} tips send this week")
+    print(f"{round(all_donuts, 1)} donuts send this week")  
     send_ranks = create_table(user_send, True, date)
     received_ranks = create_table(user_receive, False, date)
     # calculate rank differenc

@@ -41,7 +41,7 @@ def plot(users: Dict[str, Set[str]], output_file_name: str) -> None:
 
 
 if __name__ == "__main__":
-    date_str = "2024-08-07"
+    date_str = "2024-08-19"
     date = datetime.strptime(f"{date_str} 00:00:00", '%Y-%m-%d %H:%M:%S')
     local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
     file_name = local_path + 'input\\tips_round_140.json'

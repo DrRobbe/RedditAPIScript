@@ -123,7 +123,7 @@ def analyse_amounts(amounts: List[str]) -> None:
         number += 1
 
 
-def analyse_tips(users: Dict[str, List[int]], all_send_tips: int) -> None:
+def analyse_tips(users: Dict[str, List[int]], all_send_tips: int, file_name: str) -> None:
     print(f"All tips send: {all_send_tips}")
     print(f"Mean tips send per user: {round(all_send_tips/len(users), 1)}")
     plot_tip_amount(users, file_name)
@@ -150,8 +150,10 @@ def analyse_tips(users: Dict[str, List[int]], all_send_tips: int) -> None:
 
 if __name__ == "__main__":
     path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
-    file_name = path + 'input\\tips_round_140.json'
-    users, amounts = create_user(file_name)
+    json_file = 'tips_round_140.json'
+    input_file = path + 'input\\' + json_file
+    output_file = path + 'output\\' + json_file
+    users, amounts = create_user(input_file)
     print("All registered users in this distribution: " + str(len(users)))
     print("===== Donuts =====")
     analyse_amounts(amounts)
@@ -190,7 +192,7 @@ if __name__ == "__main__":
                     receive_distribution[precentage].append(user + ": " + str(received_uservalue) + "%, send: " + str(send_tips) + ", received: " + str(received_tips))
                     break
     print("===== Tips =====")
-    analyse_tips(users, all_send_tips)
+    analyse_tips(users, all_send_tips, output_file)
     print(f"Users with more than 10 tips send or received: {all_user}")
     all_receive = 0
     for _, value in receive_distribution.items():
@@ -200,9 +202,9 @@ if __name__ == "__main__":
     for _, value in send_distribution.items():
         all_send += len(value)
     print(f"Amount of users which send more tips: {all_send}")
-    plot_tip_distribution(send_distribution, receive_distribution, all_send, all_receive, all_user, file_name)
+    plot_tip_distribution(send_distribution, receive_distribution, all_send, all_receive, all_user, output_file)
     # dump user data
-    with open(path + 'output\\UserStats' + file_name.split("_")[2].split(".")[0] + "_for10tipsSendReceived.txt", "w") as current_file:
+    with open(path + 'output\\UserStats' + json_file.split("_")[2].split(".")[0] + "_for10tipsSendReceived.txt", "w") as current_file:
         for precentage, value in send_distribution.items():
             current_file.write(f"Users with less than {precentage}% send:\n")
             for line in value:

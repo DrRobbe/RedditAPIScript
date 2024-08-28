@@ -70,7 +70,7 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
         tips = person[1][0]
         max_donut_partner = users_amount[person[0]][1].split("$$$")[0]
         max_donut_amount = users_amount[person[0]][1].split("$$$")[1]
-        output.append(f"| {number} | {person[0]} | {int(tips)} | {max_partner} ({max_amount}) | {donuts} | {max_donut_partner} ({max_donut_amount}) | {round(donuts/tips, 1)} |")
+        output.append(f"| {number} | {person[0]} | {int(tips)} | {max_partner} ({max_amount}) | {round(donuts, 1)} | {max_donut_partner} ({max_donut_amount}) | {round(donuts/tips, 1)} |")
         number += 1
 
     with open(f'output\\{filler}_since{str(date).split(" ")[0]}-tabel.txt', 'w') as f:
@@ -81,7 +81,7 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 if __name__ == "__main__":
     local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
-    date = datetime.strptime("2024-08-19 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date = datetime.strptime("2024-07-31 00:00:00", '%Y-%m-%d %H:%M:%S')
     print("Check all tips since :" + str(date))
     file_name = local_path + 'input\\tips_round_140.json'
     user_send, user_receive = create_user(file_name, date)
@@ -92,8 +92,8 @@ if __name__ == "__main__":
         for _, values in data.items():
             all_tips += values[0]
             all_donuts += values[1]
-    print(f"{all_tips} tips send this week")
-    print(f"{round(all_donuts, 1)} donuts send this week")  
+    print(f"{all_tips} tips send")
+    print(f"{round(all_donuts, 1)} donuts send")  
     send_ranks = create_table(user_send, True, date)
     received_ranks = create_table(user_receive, False, date)
     # calculate rank differenc
@@ -105,9 +105,9 @@ if __name__ == "__main__":
             if user in data.split(" | ")[1]:
                 rank2 = int(data.split(" | ")[0][2:])
                 ranked_difference[user] = rank-rank2
-    print("Top 3 users with highest rank differnce of both lists, with lower receive rank:")
+    print("Top 3 users with highest rank difference, with lower receive rank and higher send rank:")
     for person in sorted(ranked_difference.items(), key=lambda item: item[1])[:3]:
         print(f"* {person[0]} - rank difference: {abs(person[1])}")
-    print("Top 3 users with highest rank differnce of both lists, with lower send rank:")
+    print("Top 3 users with highest rank difference, with lower send rank and higher receive rank:")
     for person in reversed(sorted(ranked_difference.items(), key=lambda item: item[1])[-3:]):
         print(f"* {person[0]} - rank difference: {abs(person[1])}")

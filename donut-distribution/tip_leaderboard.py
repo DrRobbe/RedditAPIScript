@@ -81,7 +81,7 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 if __name__ == "__main__":
     local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
-    date = datetime.strptime("2024-09-02 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date = datetime.strptime("2024-09-09 00:00:00", '%Y-%m-%d %H:%M:%S')
     print("Check all tips since :" + str(date))
     file_name = local_path + 'input\\tips_round_141.json'
     user_send, user_receive = create_user(file_name, date)

@@ -18,11 +18,15 @@ def create_user(file_name: str) -> Tuple[Dict[str, List[int]], List[str]]:
             id_amount = str(amount) + "-" + sender + "-" + receiver
             amounts.append(id_amount)
             if sender not in user:
-                user[sender] = [0, 0]
+                user[sender] = [0, 0, 0, 0]
             if receiver not in user:
-                user[receiver] = [0, 0]
+                user[receiver] = [0, 0, 0, 0]
             user[sender][0] += 1
             user[receiver][1] += 1
+            if "t3_" in values["parent_content_id"]:
+                user[sender][2] += 1
+            elif "t1_" in values["parent_content_id"]:
+                user[sender][3] += 1
     return user, amounts
 
 
@@ -123,9 +127,13 @@ def analyse_amounts(amounts: List[str]) -> None:
         number += 1
 
 
-def analyse_tips(users: Dict[str, List[int]], all_send_tips: int, file_name: str) -> None:
+def analyse_tips(users: Dict[str, List[int]], all_send_tips: int, all_send_to_post: int, all_send_to_comments: int, file_name: str) -> None:
     print(f"All tips send: {all_send_tips}")
     print(f"Mean tips send per user: {round(all_send_tips/len(users), 1)}")
+    print(f"All tips send to posts: {all_send_to_post}")
+    print(f"Mean tips send to post per user: {round(all_send_to_post/len(users), 1)}")
+    print(f"All tips send to comments: {all_send_to_comments}")
+    print(f"Mean tips send to comments per user: {round(all_send_to_comments/len(users), 1)}")
     plot_tip_amount(users, file_name)
     print("Top3 users with most tips received: ")
     number = 1
@@ -150,7 +158,7 @@ def analyse_tips(users: Dict[str, List[int]], all_send_tips: int, file_name: str
 
 if __name__ == "__main__":
     path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
-    json_file = 'tips_round_140.json'
+    json_file = 'tips_round_141.json'
     input_file = path + 'input\\' + json_file
     output_file = path + 'output\\' + json_file
     users, amounts = create_user(input_file)
@@ -166,6 +174,8 @@ if __name__ == "__main__":
 
     all_user = 0
     all_send_tips = 0
+    all_send_to_post = 0
+    all_send_to_comments = 0
     # normal distribution for 10+ send/received users
     for user, stats in users.items():
         send_uservalue = -1.
@@ -173,6 +183,8 @@ if __name__ == "__main__":
         send_tips = stats[0]
         received_tips = stats[1]
         all_send_tips += send_tips
+        all_send_to_post += stats[2]
+        all_send_to_comments += stats[3]
         if send_tips > 10 or received_tips > 10:
             all_user += 1
             # more send
@@ -192,7 +204,7 @@ if __name__ == "__main__":
                     receive_distribution[precentage].append(user + ": " + str(received_uservalue) + "%, send: " + str(send_tips) + ", received: " + str(received_tips))
                     break
     print("===== Tips =====")
-    analyse_tips(users, all_send_tips, output_file)
+    analyse_tips(users, all_send_tips, all_send_to_post, all_send_to_comments, output_file)
     print(f"Users with more than 10 tips send or received: {all_user}")
     all_receive = 0
     for _, value in receive_distribution.items():

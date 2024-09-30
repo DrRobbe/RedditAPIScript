@@ -69,7 +69,7 @@ def plot_tip_amount(users: Dict[str, List[int]], file_name: str) -> None:
     send_median = str(round(statistics.median(send_amount), 1))
     receive_median = str(round(statistics.median(receive_amount), 1))
     print("Median tips send per user: " + send_median)
-    print("Median tips recieved per user: " + receive_median)
+    print("Median tips received per user: " + receive_median)
     # Plotting x-axis and y-axis
     plt.yscale("log")
     # naming of x-axis and y-axis

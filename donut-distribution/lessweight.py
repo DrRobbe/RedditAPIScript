@@ -26,7 +26,7 @@ def create_user(file_name: str) -> Dict[str, List[int]]:
 
 if __name__ == "__main__":
     local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
-    file_name = local_path + 'input\\tips_round_140.json'
+    file_name = local_path + 'input\\tips_round_142.json'
     users = create_user(file_name)
     send = 0
     received = 0

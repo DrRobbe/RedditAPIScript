@@ -35,4 +35,4 @@ if __name__ == "__main__":
         received += tips[1]
     print(send)
     print(received)
-    print(round(received / send, 1))
+    print(round(received / send, 2))

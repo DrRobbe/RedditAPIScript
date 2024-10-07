@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from typing import Dict, List, Tuple, Any
 
+local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
 
 def create_user(file_name: str, date: datetime) -> Tuple[Dict[str, Dict[str, List[float]]], Dict[str, Dict[str, List[float]]]]:
     user_send: Dict[str, Dict[str, List[float]]] = {}
@@ -73,17 +74,16 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
         output.append(f"| {number} | {person[0]} | {int(tips)} | {max_partner} ({max_amount}) | {round(donuts, 1)} | {max_donut_partner} ({max_donut_amount}) | {round(donuts/tips, 1)} |")
         number += 1
 
-    with open(f'output\\{filler}_since{str(date).split(" ")[0]}-tabel.txt', 'w') as f:
+    with open(local_path + f'output\\{filler}_since{str(date).split(" ")[0]}-tabel.txt', 'w') as f:
         for line in output:
             f.write(f"{line}\n")
     return output
 
 
 if __name__ == "__main__":
-    local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
-    date = datetime.strptime("2024-09-16 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date = datetime.strptime("2024-09-30 00:00:00", '%Y-%m-%d %H:%M:%S')
     print("Check all tips since :" + str(date))
-    file_name = local_path + 'input\\tips_round_141.json'
+    file_name = local_path + 'input\\tips_round_142.json'
     user_send, user_receive = create_user(file_name, date)
     # global data
     all_tips = 0

@@ -31,6 +31,25 @@ def create_user(file_name: str, date: datetime) -> Tuple[Dict[str, Dict[str, Lis
     return user_send, user_receive
 
 
+def best_buddy_leaderboard(max_tip_partners : Dict[str, int]) -> None:
+    number = 1
+    current_rank = number
+    last_number = 100
+    output = [f"| No. | Name | Number of best buddies |",
+              "|:-|:--------------|:---------:|"]
+    for person in reversed(sorted(max_tip_partners.items(), key=lambda item: item[1])):
+        if person[1] > 1:
+            if person[1] < last_number:
+                last_number = person[1]
+                current_rank = number
+            output.append(f"| {current_rank} | {person[0]} | {person[1]} |")
+        number += 1
+
+    with open(local_path + 'output\\Best_buddy_leaderboard-tabel.txt', 'w') as f:
+        for line in output:
+            f.write(f"{line}\n")
+
+
 def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, date: datetime) -> List[str]:
     list_length = 100
     filler = "Send"
@@ -41,6 +60,7 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
         filler1 = "received from"
     users_tips: Dict[str, List[Any]] = {}
     users_amount: Dict[str, List[Any]] = {}
+    max_tip_partners : Dict[str, int] = {}
     for user, partners in users.items():
         if user not in users_tips:
             users_tips[user] = [0., '']
@@ -59,6 +79,9 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
             if max_donut < values[1]:
                 max_donut = values[1]
                 max_donut_partner = partner
+        if max_tip_partner not in max_tip_partners:
+            max_tip_partners[max_tip_partner] = 0
+        max_tip_partners[max_tip_partner] +=1
         users_tips[user][1] = max_tip_partner + separator + str(round(max_tip))
         users_amount[user][1] = max_donut_partner + separator + str(round(max_donut, 1))
     number = 1
@@ -77,6 +100,8 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
     with open(local_path + f'output\\{filler}_since{str(date).split(" ")[0]}-tabel.txt', 'w') as f:
         for line in output:
             f.write(f"{line}\n")
+    if send_table:
+        best_buddy_leaderboard(max_tip_partners)
     return output
 
 

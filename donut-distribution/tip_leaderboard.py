@@ -87,14 +87,19 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
     number = 1
     output = [f"| No. | Name | {filler} tips | Most tips {filler1} | {filler} Donuts | Most donuts {filler1} | Average Donuts per tip |",
               "|:-|:--------------|:-------:|:---------------------:|:------:|:---------------------:|:------------:|"]
+    current_rank = number
+    last_tips = 100000
     for person in reversed(sorted(users_tips.items(), key=lambda item: item[1][0])[-list_length:]):
         max_partner = str(person[1][1]).split("$$$")[0]
         max_amount = str(person[1][1]).split("$$$")[1]
         donuts = users_amount[person[0]][0]
         tips = person[1][0]
+        if tips < last_tips:
+                last_tips = tips
+                current_rank = number
         max_donut_partner = users_amount[person[0]][1].split("$$$")[0]
         max_donut_amount = users_amount[person[0]][1].split("$$$")[1]
-        output.append(f"| {number} | {person[0]} | {int(tips)} | {max_partner} ({max_amount}) | {round(donuts, 1)} | {max_donut_partner} ({max_donut_amount}) | {round(donuts/tips, 1)} |")
+        output.append(f"| {current_rank} | {person[0]} | {int(tips)} | {max_partner} ({max_amount}) | {round(donuts, 1)} | {max_donut_partner} ({max_donut_amount}) | {round(donuts/tips, 1)} |")
         number += 1
 
     with open(local_path + f'output\\{filler}_since{str(date).split(" ")[0]}-tabel.txt', 'w') as f:
@@ -106,7 +111,7 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 
 if __name__ == "__main__":
-    date = datetime.strptime("2024-09-30 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date = datetime.strptime("2024-10-07 00:00:00", '%Y-%m-%d %H:%M:%S')
     print("Check all tips since :" + str(date))
     file_name = local_path + 'input\\tips_round_142.json'
     user_send, user_receive = create_user(file_name, date)

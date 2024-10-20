@@ -156,11 +156,12 @@ def analyse_tips(users: Dict[str, List[int]], all_send_tips: int, all_send_to_po
     for person in reversed(sorted(tip_difference.items(), key=lambda item: item[1])[-5:]):
         print(f"* {person[0]} - tip difference: {person[1]} - gets {round(100 * users[person[0]][1]/users[person[0]][0], 1)}% of the time tipped back.")
 
+
 if __name__ == "__main__":
     path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
     json_file = 'tips_round_141.json'
     input_file = path + 'input\\' + json_file
-    output_file = path + 'output\\' + json_file
+    output_file = path + 'output\\distribution\\' + json_file
     users, amounts = create_user(input_file)
     print("All registered users in this distribution: " + str(len(users)))
     print("===== Donuts =====")
@@ -216,7 +217,7 @@ if __name__ == "__main__":
     print(f"Amount of users which send more tips: {all_send}")
     plot_tip_distribution(send_distribution, receive_distribution, all_send, all_receive, all_user, output_file)
     # dump user data
-    with open(path + 'output\\UserStats' + json_file.split("_")[2].split(".")[0] + "_for10tipsSendReceived.txt", "w") as current_file:
+    with open(path + 'output\\distribution\\UserStats' + json_file.split("_")[2].split(".")[0] + "_for10tipsSendReceived.txt", "w") as current_file:
         for precentage, value in send_distribution.items():
             current_file.write(f"Users with less than {precentage}% send:\n")
             for line in value:

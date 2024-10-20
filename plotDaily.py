@@ -18,10 +18,10 @@ def plot_daily(source_file):
     legened_weekend = True
     for day in weekend:
         if legened_weekend:
-            plt.axvspan(day-1, day, alpha=0.2, color='green', label="weekend")
+            plt.axvspan(day - 1, day, alpha=0.2, color='green', label="weekend")
             legened_weekend = False
         else:
-            plt.axvspan(day-1, day, alpha=0.2, color='green')
+            plt.axvspan(day - 1, day, alpha=0.2, color='green')
 
     plt.xticks(np.arange(0, len(dates), 5.0))
     plt.xlabel('date')
@@ -44,9 +44,9 @@ def get_plot_data(source_file):
     for line in data_lines:
         sub_list = line.split('#')
         tmp_date = sub_list[0].split(',')[0].split(' ')
-        dates.append(tmp_date[1]+"."+tmp_date[0])
+        dates.append(tmp_date[1] + "." + tmp_date[0])
         upvotes.append(int(sub_list[1].split(' ')[0]))
-        comments.append(float((sub_list[2].split(' ')[0])[:-1])*1000)
+        comments.append(float((sub_list[2].split(' ')[0])[:-1]) * 1000)
         awards.append(int(sub_list[3].split(' ')[0]))
         if len(sub_list) > 4:
             if "SnapshotDay" in sub_list[4]:

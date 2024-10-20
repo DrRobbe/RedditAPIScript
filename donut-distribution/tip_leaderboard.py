@@ -4,6 +4,7 @@ from typing import Dict, List, Tuple, Any
 
 local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
 
+
 def create_user(file_name: str, date: datetime) -> Tuple[Dict[str, Dict[str, List[float]]], Dict[str, Dict[str, List[float]]]]:
     user_send: Dict[str, Dict[str, List[float]]] = {}
     user_receive: Dict[str, Dict[str, List[float]]] = {}
@@ -31,11 +32,11 @@ def create_user(file_name: str, date: datetime) -> Tuple[Dict[str, Dict[str, Lis
     return user_send, user_receive
 
 
-def best_buddy_leaderboard(max_tip_partners : Dict[str, int]) -> None:
+def best_buddy_leaderboard(max_tip_partners: Dict[str, int]) -> None:
     number = 1
     current_rank = number
     last_number = 100
-    output = [f"| No. | Name | Number of best buddies |",
+    output = ["| No. | Name | Number of best buddies |",
               "|:-|:--------------|:---------:|"]
     for person in reversed(sorted(max_tip_partners.items(), key=lambda item: item[1])):
         if person[1] > 1:
@@ -45,7 +46,7 @@ def best_buddy_leaderboard(max_tip_partners : Dict[str, int]) -> None:
             output.append(f"| {current_rank} | {person[0]} | {person[1]} |")
         number += 1
 
-    with open(local_path + 'output\\Best_buddy_leaderboard-tabel.txt', 'w') as f:
+    with open(local_path + 'output\\tips\\Best_buddy_leaderboard-tabel.txt', 'w') as f:
         for line in output:
             f.write(f"{line}\n")
 
@@ -60,7 +61,7 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
         filler1 = "received from"
     users_tips: Dict[str, List[Any]] = {}
     users_amount: Dict[str, List[Any]] = {}
-    max_tip_partners : Dict[str, int] = {}
+    max_tip_partners: Dict[str, int] = {}
     for user, partners in users.items():
         if user not in users_tips:
             users_tips[user] = [0., '']
@@ -81,7 +82,7 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
                 max_donut_partner = partner
         if max_tip_partner not in max_tip_partners:
             max_tip_partners[max_tip_partner] = 0
-        max_tip_partners[max_tip_partner] +=1
+        max_tip_partners[max_tip_partner] += 1
         users_tips[user][1] = max_tip_partner + separator + str(round(max_tip))
         users_amount[user][1] = max_donut_partner + separator + str(round(max_donut, 1))
     number = 1
@@ -95,14 +96,14 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
         donuts = users_amount[person[0]][0]
         tips = person[1][0]
         if tips < last_tips:
-                last_tips = tips
-                current_rank = number
+            last_tips = tips
+            current_rank = number
         max_donut_partner = users_amount[person[0]][1].split("$$$")[0]
         max_donut_amount = users_amount[person[0]][1].split("$$$")[1]
         output.append(f"| {current_rank} | {person[0]} | {int(tips)} | {max_partner} ({max_amount}) | {round(donuts, 1)} | {max_donut_partner} ({max_donut_amount}) | {round(donuts/tips, 1)} |")
         number += 1
 
-    with open(local_path + f'output\\{filler}_since{str(date).split(" ")[0]}-tabel.txt', 'w') as f:
+    with open(local_path + f'output\\tips\\{filler}_since{str(date).split(" ")[0]}-tabel.txt', 'w') as f:
         for line in output:
             f.write(f"{line}\n")
     if send_table:
@@ -135,7 +136,7 @@ if __name__ == "__main__":
             if max_tips < values[0]:
                 max_tips = values[0]
                 max_send_tip = send_user
-                max_received_tip = receive_user            
+                max_received_tip = receive_user
     print(f"{all_tips} tips send")
     print(f"On average {round(all_tips/len(user_send), 1)} tips were send per user")
     print(f"{round(all_donuts, 1)} donuts send")
@@ -152,7 +153,7 @@ if __name__ == "__main__":
         for data in received_ranks[2:]:
             if user in data.split(" | ")[1]:
                 rank2 = int(data.split(" | ")[0][2:])
-                ranked_difference[user] = rank-rank2
+                ranked_difference[user] = rank - rank2
     print("Top 3 users with highest rank difference, with lower receive rank and higher send rank:")
     for person in sorted(ranked_difference.items(), key=lambda item: item[1])[:3]:
         print(f"* {person[0]} - rank difference: {abs(person[1])}")

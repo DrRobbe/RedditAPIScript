@@ -16,4 +16,3 @@ if __name__ == "__main__":
     print("=====")
     print(statistics.mean(all_data))
     print(statistics.stdev(all_data))
-    

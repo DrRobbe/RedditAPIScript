@@ -51,7 +51,7 @@ def best_buddy_leaderboard(max_tip_partners: Dict[str, int]) -> None:
             f.write(f"{line}\n")
 
 
-def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, date: datetime) -> List[str]:
+def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, date: datetime, distribution: str) -> List[str]:
     list_length = 100
     filler = "Send"
     filler1 = "given to"
@@ -103,7 +103,7 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
         output.append(f"| {current_rank} | {person[0]} | {int(tips)} | {max_partner} ({max_amount}) | {round(donuts, 1)} | {max_donut_partner} ({max_donut_amount}) | {round(donuts/tips, 1)} |")
         number += 1
 
-    with open(local_path + f'output\\tips\\{filler}_since{str(date).split(" ")[0]}-tabel.txt', 'w') as f:
+    with open(local_path + f'output\\tips\\{filler}_since{str(date).split(" ")[0]}-tabel-round{distribution}.txt', 'w') as f:
         for line in output:
             f.write(f"{line}\n")
     if send_table:
@@ -112,9 +112,10 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 
 if __name__ == "__main__":
-    date = datetime.strptime("2024-10-07 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date = datetime.strptime("2024-01-02 00:00:00", '%Y-%m-%d %H:%M:%S')
     print("Check all tips since :" + str(date))
-    file_name = local_path + 'input\\tips_round_142.json'
+    distribution = '140'
+    file_name = local_path + f'input\\tips_round_{distribution}.json'
     user_send, user_receive = create_user(file_name, date)
     # global data
     all_tips = 0
@@ -143,8 +144,8 @@ if __name__ == "__main__":
     print(f"On average {round(all_donuts/len(user_send), 1)} donuts were send per user")
     print(f"Most tips send this week from one person to another: {max_send_tip} send {max_tips} tips to {max_received_tip}")
     print(f"Most donuts send this week from one person to another: {max_send_donuts} send {round(max_donuts, 1)} donuts to {max_received_donuts}")
-    send_ranks = create_table(user_send, True, date)
-    received_ranks = create_table(user_receive, False, date)
+    send_ranks = create_table(user_send, True, date, distribution)
+    received_ranks = create_table(user_receive, False, date, distribution)
     # calculate rank differenc
     ranked_difference = {}
     for entry in send_ranks[2:]:

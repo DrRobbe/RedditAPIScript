@@ -107,8 +107,7 @@ if __name__ == "__main__":
     output_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\output\\registered_user\\'
     registered_user, user_amount = create_user(local_path + 'user')
     active_user = create_active_user(local_path + 'finale_csv')
-    print(user_amount)
-    plot_user(user_amount, output_path + 'new_registered_user.png', "New registered users per round!")
+    band_user = create_active_user(local_path + 'ban_user')
     zero_user: Dict[int, int] = {}
     last_distribution = 0
     for _, user in registered_user.items():
@@ -118,6 +117,12 @@ if __name__ == "__main__":
             if amount == 0 and user.contrib_history[distribution] > 0:
                 zero_user[distribution] += 1
             last_distribution = distribution
+    print(user_amount)
+    plot_user(user_amount, output_path + 'new_registered_user.png', "New registered users per round!")
+    print(active_user)
+    plot_user(active_user, output_path + 'active_user.png', "User which earned donuts per round!") 
+    print(band_user)
+    plot_user(band_user, output_path + 'band_user.png', "Perma banned user per round!")
     print(zero_user)
     plot_user(zero_user, output_path + 'zero_balance_user.png', "Registered users with zero balance!")
     print(f"Currently there are {user_amount[last_distribution]} registered user.")
@@ -126,5 +131,4 @@ if __name__ == "__main__":
         if user.contrib_history[last_distribution] == 0:
             zero_contrib_user += 1
     print(f"{zero_contrib_user} registered user have never earned any donuts,\nwhich is {round(100*(zero_contrib_user/user_amount[last_distribution]), 2)}% of all registered user.")
-    plot_user(active_user, output_path + 'active_user.png', "User which earned donuts per round!")
     plot_percentage(user_amount, active_user, zero_user, output_path + 'percentage_of_registered_user.png')

@@ -21,7 +21,7 @@ def create_user(user_name: str, file_name: str) -> Dict[str, int]:
 
 if __name__ == "__main__":
     user = 'DrRobbe'
-    distribution = '141'
+    distribution = 142
     print(f"Check all tips for {user} in round {distribution}")
     file_name = local_path + f'input\\tips_round_{distribution}.json'
     user_send = create_user(user, file_name)

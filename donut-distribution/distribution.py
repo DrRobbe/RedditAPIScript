@@ -147,8 +147,8 @@ def analyse_tips(users: Dict[str, List[int]], all_send_tips: int, all_send_to_po
         number += 1
         # calculate tip difference
     tip_difference = {}
-    for user, tips in users.items():
-        tip_difference[user] = tips[0] - tips[1]
+    for use, tips in users.items():
+        tip_difference[use] = tips[0] - tips[1]
     print("Top 5 users with highest tip difference, with more received tips:")
     for person in sorted(tip_difference.items(), key=lambda item: item[1])[:5]:
         print(f"* {person[0]} - tip difference: {abs(person[1])} - tips {round(100 * users[person[0]][0]/users[person[0]][1], 1)}% of the time back.")
@@ -208,21 +208,21 @@ if __name__ == "__main__":
     analyse_tips(users, all_send_tips, all_send_to_post, all_send_to_comments, output_file)
     print(f"Users with more than 10 tips send or received: {all_user}")
     all_receive = 0
-    for _, value in receive_distribution.items():
-        all_receive += len(value)
+    for _, values in receive_distribution.items():
+        all_receive += len(values)
     print(f"Amount of users which received more tips: {all_receive}")
     all_send = 0
-    for _, value in send_distribution.items():
-        all_send += len(value)
+    for _, values in send_distribution.items():
+        all_send += len(values)
     print(f"Amount of users which send more tips: {all_send}")
     plot_tip_distribution(send_distribution, receive_distribution, all_send, all_receive, all_user, output_file)
     # dump user data
     with open(path + 'output\\distribution\\UserStats' + json_file.split("_")[2].split(".")[0] + "_for10tipsSendReceived.txt", "w") as current_file:
-        for precentage, value in send_distribution.items():
+        for precentage, data in send_distribution.items():
             current_file.write(f"Users with less than {precentage}% send:\n")
-            for line in value:
+            for line in data:
                 current_file.write("\t" + line + "\n")
-        for precentage, value in sorted(list(receive_distribution.items()), reverse=True):
+        for precentage, data in sorted(list(receive_distribution.items()), reverse=True):
             current_file.write(f"Users with less than {precentage}% receive\n")
-            for line in value:
+            for line in data:
                 current_file.write("\t" + line + "\n")

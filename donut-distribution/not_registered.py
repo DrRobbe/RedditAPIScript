@@ -77,9 +77,9 @@ def plot_percentage(user_amount: Dict[int, int], active_user: Dict[int, int], ze
     active: List[int] = []
     for key, amount in active_user.items():
         rounds.append(key)
-        active.append(round(100 * amount / user_amount[key], 1))
+        active.append(int(round(100 * amount / user_amount[key], 1)))
     for key, amount in zero_user.items():
-        zero.append(round(100 * amount / user_amount[key], 1))
+        zero.append(int(round(100 * amount / user_amount[key], 1)))
     plt.xlabel("Round")
     plt.ylabel("Percentage of all registered users")
     plt.plot(rounds, active, color='red', linestyle="-", marker='D')
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     print(user_amount)
     plot_user(user_amount, output_path + 'new_registered_user.png', "New registered users per round!")
     print(active_user)
-    plot_user(active_user, output_path + 'active_user.png', "User which earned donuts per round!") 
+    plot_user(active_user, output_path + 'active_user.png', "User which earned donuts per round!")
     print(band_user)
     plot_user(band_user, output_path + 'band_user.png', "Perma banned user per round!")
     print(zero_user)

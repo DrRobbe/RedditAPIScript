@@ -51,7 +51,7 @@ def best_buddy_leaderboard(max_tip_partners: Dict[str, int]) -> None:
             f.write(f"{line}\n")
 
 
-def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, date: datetime, distribution: str) -> List[str]:
+def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, date: datetime, distribution: int) -> List[str]:
     list_length = 100
     filler = "Send"
     filler1 = "given to"
@@ -114,16 +114,16 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 if __name__ == "__main__":
     date = datetime.strptime("2024-10-14 00:00:00", '%Y-%m-%d %H:%M:%S')
     print("Check all tips since :" + str(date))
-    distribution = '142'
+    distribution = 142
     file_name = local_path + f'input\\tips_round_{distribution}.json'
     user_send, user_receive = create_user(file_name, date)
     # global data
-    all_tips = 0
+    all_tips = 0.
     all_donuts = 0.
     max_donuts = 0.
     max_send_donuts = ''
     max_received_donuts = ''
-    max_tips = 0
+    max_tips = 0.
     max_send_tip = ''
     max_received_tip = ''
     for send_user, data in user_send.items():
@@ -151,9 +151,9 @@ if __name__ == "__main__":
     for entry in send_ranks[2:]:
         user = entry.split(" | ")[1]
         rank = int(entry.split(" | ")[0][2:])
-        for data in received_ranks[2:]:
-            if user in data.split(" | ")[1]:
-                rank2 = int(data.split(" | ")[0][2:])
+        for stuff in received_ranks[2:]:
+            if user in stuff.split(" | ")[1]:
+                rank2 = int(stuff.split(" | ")[0][2:])
                 ranked_difference[user] = rank - rank2
     print("Top 3 users with highest rank difference, with lower receive rank and higher send rank:")
     for person in sorted(ranked_difference.items(), key=lambda item: item[1])[:3]:

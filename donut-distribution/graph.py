@@ -42,9 +42,9 @@ def plot(users: Dict[str, Set[str]], output_file_name: str) -> None:
 
 if __name__ == "__main__":
     date_str = "2024-07-31"
-    round = "142"
+    distribution = 142
     date = datetime.strptime(f"{date_str} 00:00:00", '%Y-%m-%d %H:%M:%S')
     local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
-    file_name = f'{local_path}input\\tips_round_{round}.json'
+    file_name = f'{local_path}input\\tips_round_{distribution}.json'
     users = create_user(file_name, date)
-    plot(users, local_path + f'output\\graph_{round}_{date_str}.html')
+    plot(users, local_path + f'output\\graph_{distribution}_{date_str}.html')

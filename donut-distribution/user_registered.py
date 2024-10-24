@@ -57,7 +57,7 @@ def plot_user(user_amount: Dict[int, int], file_name: str, title: str) -> None:
     for key, amount in user_amount.items():
         rounds.append(key)
         user.append(amount)
-    plt.xlabel("Round")
+    plt.xlabel("Distribution Round")
     plt.ylabel("User")
     plt.plot(rounds, user, color='red', linestyle="-", marker='D')
     for i in range(1, len(rounds)):
@@ -71,31 +71,41 @@ def plot_user(user_amount: Dict[int, int], file_name: str, title: str) -> None:
     plt.clf()
 
 
-def plot_percentage(user_amount: Dict[int, int], active_user: Dict[int, int], zero_user: Dict[int, int], file_name: str) -> None:
+def plot_percentage(user_amount: Dict[int, int],
+                    active_user: Dict[int, int],
+                    zero_user: Dict[int, int],
+                    twentyk_user: Dict[int, int],
+                    twentyk_contrib: Dict[int, int],
+                    file_name: str) -> None:
     rounds: List[int] = []
-    zero: List[int] = []
-    active: List[int] = []
+    zero: List[float] = []
+    active: List[float] = []
+    twenty: List[float] = []
+    twenty_contrib: List[float] = [] 
     for key, amount in active_user.items():
         rounds.append(key)
-        active.append(int(round(100 * amount / user_amount[key], 1)))
+        active.append(round(100 * amount / user_amount[key], 1))
     for key, amount in zero_user.items():
-        zero.append(int(round(100 * amount / user_amount[key], 1)))
-    plt.xlabel("Round")
+        zero.append(round(100 * amount / user_amount[key], 1))
+    for key, amount in twentyk_user.items():
+        twenty.append(round(100 * amount / user_amount[key], 1))
+    for key, amount in twentyk_contrib.items():
+        twenty_contrib.append(round(100 * amount / user_amount[key], 1))
+    print(active)
+    print(zero)
+    print(twenty)
+    print(twenty_contrib)
+    plt.xlabel("Distribution round")
     plt.ylabel("Percentage of all registered users")
     plt.plot(rounds, active, color='red', linestyle="-", marker='D')
     plt.plot(rounds, zero, color='blue', linestyle="-", marker='D')
-
-    def add_test(people: List[int]) -> None:
-        for i in range(1, len(rounds)):
-            sign = '+'
-            if people[i] - people[i - 1] < 0:
-                sign = ''
-            plt.text(rounds[i], people[i], f'{sign}{round(people[i] - people[i - 1], 1)}%', horizontalalignment='right', weight="bold")
-    add_test(active)
-    add_test(zero)
-    red_patch = mpatches.Patch(color='red', label="active user %")
-    blue_patch = mpatches.Patch(color='blue', label="user with zero balance %")
-    plt.legend(handles=[red_patch, blue_patch])
+    plt.plot(rounds, twenty, color='gold', linestyle="-", marker='D')
+    plt.plot(rounds, twenty_contrib, color='grey', linestyle="-", marker='D')
+    red_patch = mpatches.Patch(color='red', label="user which earned donuts")
+    blue_patch = mpatches.Patch(color='blue', label="user with zero balance")
+    teal_patch = mpatches.Patch(color='gold', label="user with +20k donuts")
+    olive_patch = mpatches.Patch(color='grey', label="user with +20k contrib")
+    plt.legend(handles=[red_patch, blue_patch, teal_patch, olive_patch])
     plt.title("Registered users %")
     # plt.show()
     plt.savefig(file_name)
@@ -109,26 +119,38 @@ if __name__ == "__main__":
     active_user = create_active_user(local_path + 'finale_csv')
     band_user = create_active_user(local_path + 'ban_user')
     zero_user: Dict[int, int] = {}
+    twentyk_user: Dict[int, int] = {}
+    twentyk_contrib_user: Dict[int, int] = {}
     last_distribution = 0
     for _, user in registered_user.items():
         for distribution, amount in user.donut_history.items():
             if distribution not in zero_user:
                 zero_user[distribution] = 0
+                twentyk_user[distribution] = 0
+                twentyk_contrib_user[distribution] = 0
             if amount == 0 and user.contrib_history[distribution] > 0:
                 zero_user[distribution] += 1
+            if amount > 20000:
+                twentyk_user[distribution] += 1
+            if user.contrib_history[distribution] > 20000:
+                twentyk_contrib_user[distribution] += 1
             last_distribution = distribution
     print(user_amount)
-    plot_user(user_amount, output_path + 'new_registered_user.png', "New registered users per round!")
+    plot_user(user_amount, output_path + 'new_registered_user.png', "New registered users!")
     print(active_user)
-    plot_user(active_user, output_path + 'active_user.png', "User which earned donuts per round!")
+    plot_user(active_user, output_path + 'active_user.png', "User which earned donuts!")
     print(band_user)
-    plot_user(band_user, output_path + 'band_user.png', "Perma banned user per round!")
+    plot_user(band_user, output_path + 'band_user.png', "Perma banned user!")
     print(zero_user)
     plot_user(zero_user, output_path + 'zero_balance_user.png', "Registered users with zero balance!")
+    print(twentyk_user)
+    plot_user(twentyk_user, output_path + '20k_user.png', "Users which hold +20k donuts!")
+    print(twentyk_contrib_user)
+    plot_user(twentyk_contrib_user, output_path + '20k_contrib_user.png', "Users which hold +20k contrib!")
     print(f"Currently there are {user_amount[last_distribution]} registered user.")
     zero_contrib_user = 0
     for person, user in registered_user.items():
         if user.contrib_history[last_distribution] == 0:
             zero_contrib_user += 1
     print(f"{zero_contrib_user} registered user have never earned any donuts,\nwhich is {round(100*(zero_contrib_user/user_amount[last_distribution]), 2)}% of all registered user.")
-    plot_percentage(user_amount, active_user, zero_user, output_path + 'percentage_of_registered_user.png')
+    plot_percentage(user_amount, active_user, zero_user, twentyk_user, twentyk_contrib_user, output_path + 'percentage_of_registered_user.png')

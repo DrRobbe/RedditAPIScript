@@ -19,11 +19,11 @@ def create_user(user_name: str, file_name: str) -> Dict[str, int]:
 
 
 if __name__ == "__main__":
-    ban_user = ['Downtown_Yam9137','Every_Hunt_160','sadiq_238','KIG45','lordciders',
-            'Master-Score7344','Narrow-Professor-126','rikbona','Sky-876','Fredzoor',
-            'falk_lhoste','Honey_-_Badger','Major-Remove-7190']
-    ban_user += ['kirtash93','BigRon1977','AltruisticPops','Odd-Radio-8500','Extension-Survey3014','CreepToeCurrentSea']
-    distributions = [140,141]
+    ban_user = ['Downtown_Yam9137', 'Every_Hunt_160', 'sadiq_238', 'KIG45', 'lordciders',
+                'Master-Score7344', 'Narrow-Professor-126', 'rikbona', 'Sky-876', 'Fredzoor',
+                'falk_lhoste', 'Honey_-_Badger', 'Major-Remove-7190']
+    ban_user += ['kirtash93', 'BigRon1977', 'AltruisticPops', 'Odd-Radio-8500', 'Extension-Survey3014', 'CreepToeCurrentSea', 'DBRiMatt']
+    distributions = [140, 141]
     for user in ban_user:
         output = []
         for distribution in distributions:
@@ -37,7 +37,7 @@ if __name__ == "__main__":
             output.append(f"{user} send {all_tips} tips.")
             # global data
             output.append("| No. | Send to | tips | % of all tips |")
-            #output.append("|:-|:--------------|:-------:|:------------:|")
+            # output.append("|:-|:--------------|:-------:|:------------:|")
             number = 1
             current_rank = number
             last_tips = 100000

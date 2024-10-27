@@ -81,7 +81,7 @@ def plot_percentage(user_amount: Dict[int, int],
     zero: List[float] = []
     active: List[float] = []
     twenty: List[float] = []
-    twenty_contrib: List[float] = [] 
+    twenty_contrib: List[float] = []
     for key, amount in active_user.items():
         rounds.append(key)
         active.append(round(100 * amount / user_amount[key], 1))

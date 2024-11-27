@@ -66,6 +66,7 @@ def plot_user(user_amount: Dict[int, int], file_name: str, title: str) -> None:
             sign = ''
         plt.text(rounds[i], user[i], f'{sign}{user[i] - user[i - 1]}', horizontalalignment='right', weight="bold")
     plt.title(title)
+    plt.grid()
     # plt.show()
     plt.savefig(file_name)
     plt.clf()

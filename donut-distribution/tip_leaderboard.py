@@ -60,8 +60,8 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
             max_tip_partners[max_tip_partner] = 0
         max_tip_partners[max_tip_partner] += 1
     number = 1
-    output = [f"| No. | Name | {filler} tips | Most tips {filler1} | {filler} Donuts |",
-              "|:-|:--------------|:-------:|:---------------------:|:------:|"]
+    output = [f"| No. | Name | {filler} tips | Most tips {filler1} | {filler} to x user | {filler} Donuts |",
+              "|:-|:--------------|:-------:|:---------------------:|:-------:|:------:|"]
     current_rank = number
     last_tips = 100000
     for person in reversed(sorted(users_tips.items(), key=lambda item: item[1][0])[-list_length:]):
@@ -71,10 +71,11 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
         for friend, tip in users_tips[user][1].items():
             friends += f"{friend} ({round(100 * tip / tips,1)}%) "
         donuts = users_amount[user][0]
+        contacts = len(users[user])
         if tips < last_tips:
             last_tips = tips
             current_rank = number
-        output.append(f"| {current_rank} | {user} | {tips} | {friends} | {round(donuts, 1)} |")
+        output.append(f"| {current_rank} | {user} | {tips} | {friends} | {contacts} | {round(donuts, 1)} |")
         number += 1
 
     with open(local_path + f'output\\tips\\{filler}_since{str(date).split(" ")[0]}-tabel-round{distribution}.txt', 'w') as f:

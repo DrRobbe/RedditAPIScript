@@ -12,7 +12,7 @@ def create_user(file_name: str, date: datetime) -> Tuple[Dict[str, Dict[str, Lis
         file_content = json.load(f)
     for values in file_content:
         time = str(values["created_date"]).split(".")[0]
-        if values["to_user_registered"] == 1 and datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date:
+        if datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date: #values["to_user_registered"] == 1 and 
             sender = values["from_user"]
             receiver = values["to_user"]
             if sender not in user_send:
@@ -60,7 +60,7 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
             max_tip_partners[max_tip_partner] = 0
         max_tip_partners[max_tip_partner] += 1
     number = 1
-    output = [f"| No. | Name | {filler} tips | Most tips {filler1} | {filler} to x user | {filler} Donuts |",
+    output = [f"| No. | Name | {filler} tips | Most tips {filler1} | {filler1} x user | {filler} Donuts |",
               "|:-|:--------------|:-------:|:---------------------:|:-------:|:------:|"]
     current_rank = number
     last_tips = 100000
@@ -85,9 +85,9 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 
 if __name__ == "__main__":
-    date = datetime.strptime("2024-11-11 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date = datetime.strptime("2024-11-25 00:00:00", '%Y-%m-%d %H:%M:%S')
     print("Check all tips since :" + str(date))
-    distribution = 143
+    distribution = 144
     file_name = local_path + f'input\\tips_round_{distribution}.json'
     user_send, user_receive = create_user(file_name, date)
     # global data

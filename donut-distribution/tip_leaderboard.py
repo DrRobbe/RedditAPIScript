@@ -85,9 +85,9 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 
 if __name__ == "__main__":
-    date = datetime.strptime("2024-10-01 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date = datetime.strptime("2024-12-23 00:00:00", '%Y-%m-%d %H:%M:%S')
     print("Check all tips since :" + str(date))
-    distribution = 144
+    distribution = 145
     file_name = local_path + f'input\\tips_round_{distribution}.json'
     user_send, user_receive = create_user(file_name, date)
     # global data

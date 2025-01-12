@@ -1,8 +1,8 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 import json
 
 
-def create_user(file_name: str, contrib_name: str) -> Dict[str, List[int]]:
+def create_user(file_name: str, contrib_name: str) -> Tuple[Dict[str, List[int]], Dict[str, List[int]]]:
     user: Dict[str, List[int]] = {}
     user_contrib: Dict[str, List[int]] = {}
     twentyk_contirb_user = []

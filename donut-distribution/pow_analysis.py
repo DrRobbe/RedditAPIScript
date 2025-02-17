@@ -1,9 +1,10 @@
 import json
 import os
-from typing import Dict, List
+from typing import Dict
 
 INPUT_PATH = "D:\\Scripts\\RedditAPIScript\\donut-distribution\\input\\pow\\"
 OUPUT_PATH = "D:\\Scripts\\RedditAPIScript\\donut-distribution\\"
+
 
 def create_leaderboard() -> int:
     all_users = {}
@@ -37,6 +38,7 @@ def create_leaderboard() -> int:
         for line in output:
             f.write(f"{line}\n")
     return len(weeks)
+
 
 def get_votes(weeks: int) -> None:
     voters: Dict[str, int] = {}
@@ -72,16 +74,17 @@ def get_votes(weeks: int) -> None:
     print(f"{len(voters)} voters participated in pow")
     print(voters)
     post_vote_counts = [0]
-    posts = sorted(posts.items(), key=lambda x: int(x[1]))
-    for i in range(1, posts[-1][1] + 1):
+    posts_sorted = sorted(posts.items(), key=lambda x: int(x[1]))
+    for i in range(1, posts_sorted[-1][1] + 1):
         post_vote_counts.append(0)
-        for entry in posts:
+        for entry in posts_sorted:
             if entry[1] == i:
                 post_vote_counts[i] += 1
             if entry[1] > i:
                 break
-    print(f"Most votes got {posts[-1][0]}, with {posts[-1][1]}!")     
+    print(f"Most votes got {posts_sorted[-1][0]}, with {posts_sorted[-1][1]}!")
     print(post_vote_counts)
+
 
 if __name__ == "__main__":
     weeks = create_leaderboard()

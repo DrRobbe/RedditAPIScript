@@ -85,7 +85,7 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 
 if __name__ == "__main__":
-    date = datetime.strptime("2025-02-17 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date = datetime.strptime("2025-03-03 00:00:00", '%Y-%m-%d %H:%M:%S')
     print("Check all tips since :" + str(date))
     distribution = 147
     file_name = local_path + f'input\\tips_round_{distribution}.json'

@@ -119,7 +119,7 @@ if __name__ == "__main__":
     print(f"Most donuts send this week from one person to another: {max_send_donuts} send {round(max_donuts, 1)} donuts to {max_received_donuts}")
     send_ranks = create_table(user_send, True, date, distribution, int(all_tips))
     received_ranks = create_table(user_receive, False, date, distribution, int(all_tips))
-    # calculate rank differenc
+    # calculate rank difference
     ranked_difference = {}
     for entry in send_ranks[2:]:
         user = entry.split(" | ")[1]

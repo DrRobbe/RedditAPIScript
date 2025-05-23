@@ -159,7 +159,7 @@ def analyse_tips(users: Dict[str, List[int]], all_send_tips: int, all_send_to_po
 
 if __name__ == "__main__":
     path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
-    json_file = 'tips_round_149.json'
+    json_file = 'tips_round_150.json'
     input_file = path + 'input\\' + json_file
     output_file = path + 'output\\distribution\\' + json_file
     users, amounts = create_user(input_file)

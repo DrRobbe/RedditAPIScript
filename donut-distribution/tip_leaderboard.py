@@ -5,14 +5,14 @@ from typing import Dict, List, Tuple, Any
 local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
 
 
-def create_user(file_name: str, date: datetime) -> Tuple[Dict[str, Dict[str, List[float]]], Dict[str, Dict[str, List[float]]]]:
+def create_user(file_name: str, date_old: datetime, date_new: datetime) -> Tuple[Dict[str, Dict[str, List[float]]], Dict[str, Dict[str, List[float]]]]:
     user_send: Dict[str, Dict[str, List[float]]] = {}
     user_receive: Dict[str, Dict[str, List[float]]] = {}
     with open(file_name) as f:
         file_content = json.load(f)
     for values in file_content:
         time = str(values["created_date"]).split(".")[0]
-        if datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date:  # values["to_user_registered"] == 1 and
+        if date_new > datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date_old:  # values["to_user_registered"] == 1 and
             sender = values["from_user"]
             receiver = values["to_user"]
             if sender not in user_send:
@@ -85,11 +85,12 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 
 if __name__ == "__main__":
-    date = datetime.strptime("2025-05-12 00:00:00", '%Y-%m-%d %H:%M:%S')
-    print("Check all tips since :" + str(date))
+    date_old = datetime.strptime("2025-06-02 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date_new = datetime.strptime("2025-06-09 00:00:00", '%Y-%m-%d %H:%M:%S')
+    print(f"Check all tips since {str(date_old)} until {str(date_new)}.")
     distribution = 150
     file_name = local_path + f'input\\tips_round_{distribution}.json'
-    user_send, user_receive = create_user(file_name, date)
+    user_send, user_receive = create_user(file_name, date_old, date_new)
     # global data
     all_tips = 0.
     all_donuts = 0.
@@ -117,8 +118,8 @@ if __name__ == "__main__":
     print(f"On average {round(all_donuts/len(user_send), 1)} donuts were send per user")
     print(f"Most tips send this week from one person to another: {max_send_tip} send {max_tips} tips to {max_received_tip}")
     print(f"Most donuts send this week from one person to another: {max_send_donuts} send {round(max_donuts, 1)} donuts to {max_received_donuts}")
-    send_ranks = create_table(user_send, True, date, distribution, int(all_tips))
-    received_ranks = create_table(user_receive, False, date, distribution, int(all_tips))
+    send_ranks = create_table(user_send, True, date_old, distribution, int(all_tips))
+    received_ranks = create_table(user_receive, False, date_old, distribution, int(all_tips))
     # calculate rank difference
     ranked_difference = {}
     for entry in send_ranks[2:]:

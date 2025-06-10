@@ -135,6 +135,7 @@ def analyse_tips(users: Dict[str, List[int]], all_send_tips: int, all_send_to_po
     print(f"All tips send to comments: {all_send_to_comments}")
     print(f"Mean tips send to comments per user: {round(all_send_to_comments/len(users), 1)}")
     plot_tip_amount(users, file_name)
+    print(f"{len(users)} have participated in this round.")
     print("Top3 users with most tips received: ")
     number = 1
     for user in reversed(sorted(users.items(), key=lambda item: item[1][1])[-3:]):

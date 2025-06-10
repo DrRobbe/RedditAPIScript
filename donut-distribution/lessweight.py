@@ -65,7 +65,7 @@ if __name__ == "__main__":
     for user, tips in users.items():
         send += tips[0]
         received += tips[1]
-    print(f'These {len(users)} users send {send} tips and received {received} tips.')
+    print(f'The {len(users)} users send {send} tips and received {received} tips.')
     print(f'On average they get {round(received / send, 2)} tips back for every tip they send.')
 
     contrib_send = 0
@@ -73,6 +73,6 @@ if __name__ == "__main__":
     for user, tips in user_twentyk_contirb_less_donuts.items():
         contrib_send += tips[0]
         contrib_received += tips[1]
-    print(f"From these {len(users)} user {len(user_twentyk_contirb_less_donuts)} user had a tip weight less than 1 and but 20k contrib.")
+    print(f"From these {len(users)} user {len(user_twentyk_contirb_less_donuts)} user had a tip weight less than 1 but 20k contrib.")
     print(f'These users send {contrib_send} tips and received {contrib_received} tips.')
     print(f'On average they get {round(contrib_received / contrib_send, 2)} tips back for every tip they send.')

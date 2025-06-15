@@ -8,6 +8,8 @@ local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
 def create_user(file_name: str, date_old: datetime, date_new: datetime) -> Tuple[Dict[str, Dict[str, List[float]]], Dict[str, Dict[str, List[float]]]]:
     user_send: Dict[str, Dict[str, List[float]]] = {}
     user_receive: Dict[str, Dict[str, List[float]]] = {}
+    weight = 0
+    tips = 0
     with open(file_name) as f:
         file_content = json.load(f)
     for values in file_content:
@@ -15,6 +17,8 @@ def create_user(file_name: str, date_old: datetime, date_new: datetime) -> Tuple
         if date_new > datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date_old:  # values["to_user_registered"] == 1 and
             sender = values["from_user"]
             receiver = values["to_user"]
+            weight += values["weight"]
+            tips += 1
             if sender not in user_send:
                 user_send[sender] = {}
             if receiver not in user_receive:
@@ -29,6 +33,7 @@ def create_user(file_name: str, date_old: datetime, date_new: datetime) -> Tuple
             user_receive[receiver][sender][1] += values["amount"]
     print(f"Found {len(user_send)} send user.")
     print(f"Found {len(user_receive)} receive user.")
+    print(f'Send {tips} tips, with an average tip weight of {round(weight / tips, 3)}.')
     return user_send, user_receive
 
 
@@ -85,10 +90,10 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 
 if __name__ == "__main__":
-    date_old = datetime.strptime("2025-06-02 00:00:00", '%Y-%m-%d %H:%M:%S')
-    date_new = datetime.strptime("2025-06-09 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date_old = datetime.strptime("2025-06-09 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date_new = datetime.strptime("2025-06-16 00:00:00", '%Y-%m-%d %H:%M:%S')
     print(f"Check all tips since {str(date_old)} until {str(date_new)}.")
-    distribution = 150
+    distribution = 151
     file_name = local_path + f'input\\tips_round_{distribution}.json'
     user_send, user_receive = create_user(file_name, date_old, date_new)
     # global data

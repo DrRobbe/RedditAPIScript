@@ -33,7 +33,7 @@ def create_user(file_name: str, date_old: datetime, date_new: datetime) -> Tuple
             user_receive[receiver][sender][1] += values["amount"]
     print(f"Found {len(user_send)} send user.")
     print(f"Found {len(user_receive)} receive user.")
-    print(f'Send {tips} tips, with an average tip weight of {round(weight / tips, 3)}.')
+    print(f'The {tips} tips, were send with an average tip weight of {round(weight / tips, 3)}.')
     return user_send, user_receive
 
 

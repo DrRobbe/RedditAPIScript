@@ -71,8 +71,7 @@ def get_votes(weeks: int) -> None:
     with open(OUPUT_PATH + f'output\\pow\\voters-{str(weeks)}-tabel.txt', 'w') as f:
         for line in output:
             f.write(f"{line}\n")
-    print(f"{len(voters)} voters participated in pow")
-    print(voters)
+    print(f"{len(voters)} voters participated in pow votes!")
     post_vote_counts = [0]
     posts_sorted = sorted(posts.items(), key=lambda x: int(x[1]))
     for i in range(1, posts_sorted[-1][1] + 1):
@@ -82,8 +81,11 @@ def get_votes(weeks: int) -> None:
                 post_vote_counts[i] += 1
             if entry[1] > i:
                 break
-    print(f"Most votes got {posts_sorted[-1][0]}, with {posts_sorted[-1][1]}!")
-    print(post_vote_counts)
+    print(f"{sum(post_vote_counts)} posts got at least one vote.")
+    for i in range(1, len(post_vote_counts)):
+        if post_vote_counts[i] != 0:
+            print(f"    * {post_vote_counts[i]} posts got {i} votes")
+    print(f"Most votes got post {posts_sorted[-1][0]}, with {posts_sorted[-1][1]}!")
 
 
 if __name__ == "__main__":

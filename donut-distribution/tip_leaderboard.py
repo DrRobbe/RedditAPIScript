@@ -5,32 +5,36 @@ from typing import Dict, List, Tuple, Any
 local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
 
 
-def create_user(file_name: str, date_old: datetime, date_new: datetime) -> Tuple[Dict[str, Dict[str, List[float]]], Dict[str, Dict[str, List[float]]]]:
+def create_user(distribution: int, date_old: datetime, date_new: datetime) -> Tuple[Dict[str, Dict[str, List[float]]], Dict[str, Dict[str, List[float]]]]:
     user_send: Dict[str, Dict[str, List[float]]] = {}
     user_receive: Dict[str, Dict[str, List[float]]] = {}
     weight = 0
     tips = 0
-    with open(file_name) as f:
-        file_content = json.load(f)
-    for values in file_content:
-        time = str(values["created_date"]).split(".")[0]
-        if date_new > datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date_old:  # values["to_user_registered"] == 1 and
-            sender = values["from_user"]
-            receiver = values["to_user"]
-            weight += values["weight"]
-            tips += 1
-            if sender not in user_send:
-                user_send[sender] = {}
-            if receiver not in user_receive:
-                user_receive[receiver] = {}
-            if receiver not in user_send[sender]:
-                user_send[sender][receiver] = [0., 0.]
-            if sender not in user_receive[receiver]:
-                user_receive[receiver][sender] = [0., 0.]
-            user_send[sender][receiver][0] += 1.
-            user_receive[receiver][sender][0] += 1.
-            user_send[sender][receiver][1] += values["amount"]
-            user_receive[receiver][sender][1] += values["amount"]
+    for _ in range(0, 2):
+        file_name = local_path + f'input\\tips_round_{distribution}.json'
+        print(file_name)
+        with open(file_name) as f:
+            file_content = json.load(f)
+        for values in file_content:
+            time = str(values["created_date"]).split(".")[0]
+            if date_new > datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date_old:  # values["to_user_registered"] == 1 and
+                sender = values["from_user"]
+                receiver = values["to_user"]
+                weight += values["weight"]
+                tips += 1
+                if sender not in user_send:
+                    user_send[sender] = {}
+                if receiver not in user_receive:
+                    user_receive[receiver] = {}
+                if receiver not in user_send[sender]:
+                    user_send[sender][receiver] = [0., 0.]
+                if sender not in user_receive[receiver]:
+                    user_receive[receiver][sender] = [0., 0.]
+                user_send[sender][receiver][0] += 1.
+                user_receive[receiver][sender][0] += 1.
+                user_send[sender][receiver][1] += values["amount"]
+                user_receive[receiver][sender][1] += values["amount"]
+        distribution -= 1
     print(f"Found {len(user_send)} send user.")
     print(f"Found {len(user_receive)} receive user.")
     print(f'The {tips} tips, were send with an average tip weight of {round(weight / tips, 3)}.')
@@ -90,12 +94,11 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 
 if __name__ == "__main__":
-    date_old = datetime.strptime("2025-06-09 00:00:00", '%Y-%m-%d %H:%M:%S')
-    date_new = datetime.strptime("2025-06-16 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date_old = datetime.strptime("2025-06-30 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date_new = datetime.strptime("2025-07-07 00:00:00", '%Y-%m-%d %H:%M:%S')
     print(f"Check all tips since {str(date_old)} until {str(date_new)}.")
-    distribution = 151
-    file_name = local_path + f'input\\tips_round_{distribution}.json'
-    user_send, user_receive = create_user(file_name, date_old, date_new)
+    distribution = 152
+    user_send, user_receive = create_user(distribution, date_old, date_new)
     # global data
     all_tips = 0.
     all_donuts = 0.

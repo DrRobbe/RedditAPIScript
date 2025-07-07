@@ -11,7 +11,7 @@ def create_leaderboard() -> int:
     weeks = set()
     for _, _, files in os.walk(INPUT_PATH):
         for file in files:
-            if file.endswith('.json'):
+            if file.endswith('.json') and "raw" not in file:
                 print(INPUT_PATH + file)
                 with open(INPUT_PATH + file) as f:
                     file_content = json.load(f)
@@ -43,20 +43,17 @@ def create_leaderboard() -> int:
 def get_votes(weeks: int) -> None:
     voters: Dict[str, int] = {}
     posts: Dict[str, int] = {}
-    file = "historical.txt"
-    with open(INPUT_PATH + file) as f:
-        lines = f.readlines()
-    for line in lines:
-        columns = line.split(',')
-        if columns[0] != "id":
-            voter = columns[2]
-            post = columns[1]
-            if voter not in voters:
-                voters[voter] = 0
-            if post not in posts:
-                posts[post] = 0
-            voters[voter] += 1
-            posts[post] += 1
+    with open(INPUT_PATH + "\\raw\\potd_raw.json") as f:
+        file_content = json.load(f)
+    for values in file_content:
+        voter = values["redditor"]
+        post = values["post_id"]
+        if voter not in voters:
+            voters[voter] = 0
+        if post not in posts:
+            posts[post] = 0
+        voters[voter] += 1
+        posts[post] += 1
     output = ["| No. | Name | Votes | ", "|:-|:---------------------|:------------------:|"]
     number = 1
     current_rank = number

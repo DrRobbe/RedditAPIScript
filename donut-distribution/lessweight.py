@@ -55,7 +55,7 @@ def create_user(file_name: str, contrib_name: str) -> Tuple[Dict[str, List[int]]
 
 if __name__ == "__main__":
     local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
-    distribution = 150
+    distribution = 152
     print(f"For round {distribution}:")
     file_name = f'{local_path}input\\tips_round_{distribution}.json'
     contrib_name = f'{local_path}input\\user\\users.000.task_00{distribution - 1}.txt'

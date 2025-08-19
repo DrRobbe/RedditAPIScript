@@ -1,6 +1,6 @@
 import json
 from datetime import datetime
-from typing import Dict, List, Tuple, Any
+from typing import Dict, List, Tuple, Any, Set
 
 local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
 
@@ -8,36 +8,46 @@ local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
 def create_user(distribution: int, date_old: datetime, date_new: datetime) -> Tuple[Dict[str, Dict[str, List[float]]], Dict[str, Dict[str, List[float]]]]:
     user_send: Dict[str, Dict[str, List[float]]] = {}
     user_receive: Dict[str, Dict[str, List[float]]] = {}
+    all_users: Set[str] = set()
     weight = 0
     tips = 0
-    for _ in range(0, 2):
+    for _ in range(0, 1):
         file_name = local_path + f'input\\tips_round_{distribution}.json'
         print(file_name)
         with open(file_name) as f:
             file_content = json.load(f)
         for values in file_content:
             time = str(values["created_date"]).split(".")[0]
-            if date_new > datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date_old:  # values["to_user_registered"] == 1 and
+            if date_new > datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date_old:  #values["to_user_registered"] == 1 and 
                 sender = values["from_user"]
                 receiver = values["to_user"]
                 weight += values["weight"]
                 tips += 1
                 if sender not in user_send:
                     user_send[sender] = {}
+                    all_users.add(sender)
                 if receiver not in user_receive:
                     user_receive[receiver] = {}
+                    all_users.add(receiver)
                 if receiver not in user_send[sender]:
-                    user_send[sender][receiver] = [0., 0.]
+                    user_send[sender][receiver] = [0., 0., 0., 0.]
                 if sender not in user_receive[receiver]:
-                    user_receive[receiver][sender] = [0., 0.]
+                    user_receive[receiver][sender] = [0., 0., 0., 0.]
                 user_send[sender][receiver][0] += 1.
                 user_receive[receiver][sender][0] += 1.
                 user_send[sender][receiver][1] += values["amount"]
                 user_receive[receiver][sender][1] += values["amount"]
+                if "t3_" in values["parent_content_id"]:
+                    user_send[sender][receiver][2] += 1.
+                    user_receive[receiver][sender][2] += 1.
+                elif "t1_" in values["parent_content_id"]:
+                    user_send[sender][receiver][3] += 1.
+                    user_receive[receiver][sender][3] += 1.
         distribution -= 1
     print(f"Found {len(user_send)} send user.")
     print(f"Found {len(user_receive)} receive user.")
     print(f'The {tips} tips, were send with an average tip weight of {round(weight / tips, 3)}.')
+    print(f'Found {len(all_users)} different users in tip data.')
     return user_send, user_receive
 
 
@@ -50,41 +60,40 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
         filler1 = "received from"
     users_tips: Dict[str, List[Any]] = {}
     users_amount: Dict[str, List[Any]] = {}
-    max_tip_partners: Dict[str, int] = {}
     for user, partners in users.items():
         if user not in users_tips:
-            users_tips[user] = [0., {}]
+            users_tips[user] = [0., 0., 0., {}]
         if user not in users_amount:
             users_amount[user] = [0., {}]
         i = 0
         for partner, values in reversed(sorted(partners.items(), key=lambda item: item[1][0])):
             users_tips[user][0] += values[0]
+            users_tips[user][1] += values[2]
+            users_tips[user][2] += values[3]
             users_amount[user][0] += values[1]
             if i < 3:
-                users_tips[user][1][partner] = values[0]
+                users_tips[user][3][partner] = values[0]
                 users_amount[user][1][partner] = values[1]
             i += 1
-        max_tip_partner = next(iter(users_tips[user][1]))
-        if max_tip_partner not in max_tip_partners:
-            max_tip_partners[max_tip_partner] = 0
-        max_tip_partners[max_tip_partner] += 1
     number = 1
-    output = [f"| No. | Name | {filler} tips | % of all tips {filler} | {filler1} x user | {filler} Donuts | Most tips {filler1} |",
+    output = [f"| No. | Name | {filler} tips (posts/comments) | % of all tips {filler} | {filler1} x user | {filler} Donuts | Most tips {filler1} |",
               "|:-|:--------------|:-------:|:-------:|:-------:|:------:|:---------------------:|"]
     current_rank = number
     last_tips = 100000
     for person in reversed(sorted(users_tips.items(), key=lambda item: item[1][0])[-list_length:]):
         tips = int(person[1][0])
+        tips_to_posts = int(person[1][1])
+        tips_to_comments = int(person[1][2])
         user = person[0]
         friends = ''
-        for friend, tip in users_tips[user][1].items():
+        for friend, tip in users_tips[user][3].items():
             friends += f"{friend} ({round(100 * tip / tips,1)}%) "
         donuts = users_amount[user][0]
         contacts = len(users[user])
         if tips < last_tips:
             last_tips = tips
             current_rank = number
-        output.append(f"| {current_rank} | {user} | {tips} | {round(100 * tips/all_tips, 1)}% | {contacts} | {round(donuts, 1)} | {friends} |")
+        output.append(f"| {current_rank} | {user} | {tips} ({tips_to_posts}/{tips_to_comments}) | {round(100 * tips/all_tips, 1)}% | {contacts} | {round(donuts, 1)} | {friends} |")
         number += 1
 
     with open(local_path + f'output\\tips\\{filler}_since{str(date).split(" ")[0]}-tabel-round{distribution}.txt', 'w') as f:
@@ -94,13 +103,15 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 
 if __name__ == "__main__":
-    date_old = datetime.strptime("2025-06-30 00:00:00", '%Y-%m-%d %H:%M:%S')
-    date_new = datetime.strptime("2025-07-07 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date_old = datetime.strptime("2025-08-11 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date_new = datetime.strptime("2025-08-18 00:00:00", '%Y-%m-%d %H:%M:%S')
     print(f"Check all tips since {str(date_old)} until {str(date_new)}.")
-    distribution = 152
+    distribution = 153
     user_send, user_receive = create_user(distribution, date_old, date_new)
     # global data
     all_tips = 0.
+    all_tips_to_posts = 0.
+    all_tips_to_comments = 0.
     all_donuts = 0.
     max_donuts = 0.
     max_send_donuts = ''
@@ -111,6 +122,8 @@ if __name__ == "__main__":
     for send_user, data in user_send.items():
         for receive_user, values in data.items():
             all_tips += values[0]
+            all_tips_to_posts += values[2]
+            all_tips_to_comments += values[3]
             all_donuts += values[1]
             if max_donuts < values[1]:
                 max_donuts = values[1]
@@ -121,6 +134,8 @@ if __name__ == "__main__":
                 max_send_tip = send_user
                 max_received_tip = receive_user
     print(f"{all_tips} tips send")
+    print(f"{all_tips_to_posts} tips send to posts, {round(100*all_tips_to_posts/all_tips, 1)}% of all tips send")
+    print(f"{all_tips_to_comments} tips send to comments, {round(100*all_tips_to_comments/all_tips, 1)}% of all tips send")
     print(f"On average {round(all_tips/len(user_send), 1)} tips were send per user")
     print(f"{round(all_donuts, 1)} donuts send")
     print(f"On average {round(all_donuts/len(user_send), 1)} donuts were send per user")

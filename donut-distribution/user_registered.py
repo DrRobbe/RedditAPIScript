@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import os
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-
+import numpy as np
 
 @dataclass
 class RegisteredUserData:
@@ -47,9 +47,22 @@ def create_active_user(local_path: str) -> Dict[int, int]:
                 round = int(file.split("_")[1].split(".")[0].split('00')[1])
                 with open(path) as f:
                     lines = f.readlines()
-                    active_user_amount[round] = len(lines)
+                    active_user_amount[round] = len(lines) - 1
     return active_user_amount
 
+def get_donut_burns(local_path: str) -> Dict[int, float]:
+    burned_donuts: Dict[int, float] = {}
+    for _, _, files in os.walk(local_path):
+        for file in files:
+            if file.endswith('.txt'):
+                path = local_path + '\\' + file
+                print(f'Processing: {file}')
+                round = int(file.split("_")[1].split(".")[0].split('00')[1])
+                with open(path) as f:
+                    lines = f.readlines()    
+                    if "0x000000000000000000000000000000000000dEaD" in lines[1]:
+                        burned_donuts[round] = float(lines[1].split(',')[1])
+    return burned_donuts
 
 def plot_user(user_amount: Dict[int, int], file_name: str, title: str) -> None:
     rounds: List[int] = []
@@ -71,6 +84,26 @@ def plot_user(user_amount: Dict[int, int], file_name: str, title: str) -> None:
     plt.savefig(file_name)
     plt.clf()
 
+def plot_burns(user_amount: Dict[int, float], file_name: str, title: str) -> None:
+    rounds: List[int] = []
+    donuts: List[float] = []
+    initial = 0 
+    for key, amount in user_amount.items():
+        rounds.append(key)
+        donuts.append(initial + amount)
+        initial += amount
+    plt.xlabel("Distribution Round")
+    plt.ylabel("Donuts")
+    plt.plot(rounds, donuts, color='red', linestyle="-", marker='D')
+    plt.xticks(np.arange(rounds[0], rounds[-1] + 1, step=1))
+    for i in range(1, len(rounds)):
+        sign = '+'
+        plt.text(rounds[i], donuts[i], f'{sign}{round(donuts[i] - donuts[i - 1], 1)}', horizontalalignment='right', weight="bold")
+    plt.title(title)
+    plt.grid()
+    # plt.show()
+    plt.savefig(file_name)
+    plt.clf()
 
 def plot_percentage(user_amount: Dict[int, int],
                     active_user: Dict[int, int],
@@ -119,6 +152,7 @@ if __name__ == "__main__":
     registered_user, user_amount = create_user(local_path + 'user')
     active_user = create_active_user(local_path + 'finale_csv')
     band_user = create_active_user(local_path + 'ban_user')
+    burns = get_donut_burns(local_path + 'finale_csv')
     zero_user: Dict[int, int] = {}
     twentyk_user: Dict[int, int] = {}
     twentyk_contrib_user: Dict[int, int] = {}
@@ -154,4 +188,6 @@ if __name__ == "__main__":
         if user.contrib_history[last_distribution] == 0:
             zero_contrib_user += 1
     print(f"{zero_contrib_user} registered user have never earned any donuts,\nwhich is {round(100*(zero_contrib_user/user_amount[last_distribution]), 2)}% of all registered user.")
+    print(burns)
+    plot_burns(burns, output_path + 'donut_burns.png', "Donuts burned!")
     plot_percentage(user_amount, active_user, zero_user, twentyk_user, twentyk_contrib_user, output_path + 'percentage_of_registered_user.png')

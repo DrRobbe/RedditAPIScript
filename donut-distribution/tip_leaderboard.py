@@ -18,7 +18,7 @@ def create_user(distribution: int, date_old: datetime, date_new: datetime) -> Tu
             file_content = json.load(f)
         for values in file_content:
             time = str(values["created_date"]).split(".")[0]
-            if date_new > datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date_old:  #values["to_user_registered"] == 1 and 
+            if values["to_user_registered"] == 1 and date_new > datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date_old:  #
                 sender = values["from_user"]
                 receiver = values["to_user"]
                 weight += values["weight"]
@@ -103,8 +103,8 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 
 if __name__ == "__main__":
-    date_old = datetime.strptime("2025-08-11 00:00:00", '%Y-%m-%d %H:%M:%S')
-    date_new = datetime.strptime("2025-08-18 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date_old = datetime.strptime("2025-07-30 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date_new = datetime.strptime("2025-08-28 00:00:00", '%Y-%m-%d %H:%M:%S')
     print(f"Check all tips since {str(date_old)} until {str(date_new)}.")
     distribution = 153
     user_send, user_receive = create_user(distribution, date_old, date_new)

@@ -43,8 +43,6 @@ if __name__ == "__main__":
     pay2post = []
     average_price = []
     for ratio in ratio_data[2:]:
-        if "round" in ratio:
-            continue
         data_split = ratio.split("|")
         rounds.append(int(data_split[1].strip()))
         comment_ratio.append(float(data_split[2].strip()))

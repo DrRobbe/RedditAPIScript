@@ -5,20 +5,25 @@ from typing import Dict, List, Tuple, Any, Set
 local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
 
 
-def create_user(distribution: int, date_old: datetime, date_new: datetime) -> Tuple[Dict[str, Dict[str, List[float]]], Dict[str, Dict[str, List[float]]]]:
+
+def create_user(distribution: int, date_old: datetime, date_new: datetime, full_round: bool) -> Tuple[Dict[str, Dict[str, List[float]]], Dict[str, Dict[str, List[float]]]]:
     user_send: Dict[str, Dict[str, List[float]]] = {}
     user_receive: Dict[str, Dict[str, List[float]]] = {}
     all_users: Set[str] = set()
     weight = 0
     tips = 0
-    for _ in range(0, 2):
+    csv_range = 2
+    if full_round:
+        csv_range = 1
+    for _ in range(0, csv_range):
         file_name = local_path + f'input\\tips_round_{distribution}.json'
         print(file_name)
         with open(file_name) as f:
             file_content = json.load(f)
         for values in file_content:
             time = str(values["created_date"]).split(".")[0]
-            if date_new > datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date_old:  #values["to_user_registered"] == 1 and 
+            if ((date_new > datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date_old) and
+                (values["to_user_registered"] == 1 or not full_round)):
                 sender = values["from_user"]
                 receiver = values["to_user"]
                 weight += values["weight"]
@@ -103,11 +108,14 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 
 if __name__ == "__main__":
-    date_old = datetime.strptime("2025-09-15 00:00:00", '%Y-%m-%d %H:%M:%S')
-    date_new = datetime.strptime("2025-09-22 00:00:00", '%Y-%m-%d %H:%M:%S')
-    print(f"Check all tips since {str(date_old)} until {str(date_new)}.")
+    full_round = False
     distribution = 154
-    user_send, user_receive = create_user(distribution, date_old, date_new)
+    start_date = "2025-09-15"
+    end_date = "2025-09-22"
+    date_old = datetime.strptime(f"{start_date} 00:00:00", '%Y-%m-%d %H:%M:%S')
+    date_new = datetime.strptime(f"{end_date} 00:00:00", '%Y-%m-%d %H:%M:%S')
+    print(f"Check all tips since {str(date_old)} until {str(date_new)}.")
+    user_send, user_receive = create_user(distribution, date_old, date_new, full_round)
     # global data
     all_tips = 0.
     all_tips_to_posts = 0.

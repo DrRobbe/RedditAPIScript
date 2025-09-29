@@ -5,7 +5,6 @@ from typing import Dict, List, Tuple, Any, Set
 local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
 
 
-
 def create_user(distribution: int, date_old: datetime, date_new: datetime, full_round: bool) -> Tuple[Dict[str, Dict[str, List[float]]], Dict[str, Dict[str, List[float]]]]:
     user_send: Dict[str, Dict[str, List[float]]] = {}
     user_receive: Dict[str, Dict[str, List[float]]] = {}
@@ -23,7 +22,7 @@ def create_user(distribution: int, date_old: datetime, date_new: datetime, full_
         for values in file_content:
             time = str(values["created_date"]).split(".")[0]
             if ((date_new > datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date_old) and
-                (values["to_user_registered"] == 1 or not full_round)):
+               (values["to_user_registered"] == 1 or not full_round)):
                 sender = values["from_user"]
                 receiver = values["to_user"]
                 weight += values["weight"]
@@ -109,9 +108,9 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 if __name__ == "__main__":
     full_round = False
-    distribution = 154
-    start_date = "2025-09-15"
-    end_date = "2025-09-22"
+    distribution = 155
+    start_date = "2025-09-22"
+    end_date = "2025-09-29"
     date_old = datetime.strptime(f"{start_date} 00:00:00", '%Y-%m-%d %H:%M:%S')
     date_new = datetime.strptime(f"{end_date} 00:00:00", '%Y-%m-%d %H:%M:%S')
     print(f"Check all tips since {str(date_old)} until {str(date_new)}.")

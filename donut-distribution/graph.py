@@ -10,7 +10,7 @@ def create_user(file_name: str, date: datetime) -> Dict[str, Set[str]]:
         file_content = json.load(f)
     for values in file_content:
         time = str(values["created_date"]).split(".")[0]
-        if values["to_user_registered"] == 1 and datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date:
+        if datetime.strptime(time, '%Y-%m-%d %H:%M:%S') > date: #values["to_user_registered"] == 1 and 
             sender = values["from_user"]
             receiver = values["to_user"]
             if sender not in user:
@@ -41,8 +41,8 @@ def plot(users: Dict[str, Set[str]], output_file_name: str) -> None:
 
 
 if __name__ == "__main__":
-    date_str = "2024-07-31"
-    distribution = 150
+    date_str = "2024-09-22"
+    distribution = 155
     date = datetime.strptime(f"{date_str} 00:00:00", '%Y-%m-%d %H:%M:%S')
     local_path = 'D:\\Scripts\\RedditAPIScript\\donut-distribution\\'
     file_name = f'{local_path}input\\tips_round_{distribution}.json'

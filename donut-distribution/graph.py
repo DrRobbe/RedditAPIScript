@@ -26,7 +26,7 @@ def plot(users: Dict[str, Set[str]], output_file_name: str) -> None:
     net = Network(directed=True, select_menu=True, filter_menu=True, cdn_resources='remote')
     for key, value in users.items():
         color = '#3e66c1'
-        if len(value) > 99:
+        if len(value) > 49:
             color = "#ff8800"
         elif len(value) > 9:
             color = "#ff7373"

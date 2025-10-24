@@ -107,10 +107,10 @@ def create_table(users: Dict[str, Dict[str, List[float]]], send_table: bool, dat
 
 
 if __name__ == "__main__":
-    full_round = False
+    full_round = True
     distribution = 155
-    start_date = "2025-10-06"
-    end_date = "2025-10-13"
+    start_date = "2025-09-06"
+    end_date = "2025-10-23"
     date_old = datetime.strptime(f"{start_date} 00:00:00", '%Y-%m-%d %H:%M:%S')
     date_new = datetime.strptime(f"{end_date} 00:00:00", '%Y-%m-%d %H:%M:%S')
     print(f"Check all tips since {str(date_old)} until {str(date_new)}.")
